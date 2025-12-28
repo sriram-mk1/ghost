@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+temporalio
+google-generativeai
+resend
+supabase
+pydantic
+pydantic-settings
+python-dotenv
+httpx
+# steel-sdk (if available, or use playwright-python)
+playwright
+
