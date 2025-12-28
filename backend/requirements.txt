@@ -8,6 +8,7 @@ pydantic
 pydantic-settings
 python-dotenv
 httpx
-# steel-sdk (if available, or use playwright-python)
+steel-sdk
+supermemory
 playwright
-
+python-multipart

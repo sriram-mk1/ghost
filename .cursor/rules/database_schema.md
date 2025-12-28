@@ -1,37 +1,68 @@
-# Supabase & Vector Memory (Supermemory)
+# Supabase Schema & Job Tracking
 
-## Database Schema
+## Database Tables
 
-### `users` (Supabase Auth)
-- Extension of auth.users: `full_name`, `avatar_url`.
+### `profiles`
+```sql
+CREATE TABLE profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id),
+  full_name TEXT,
+  email_address TEXT UNIQUE,
+  persona_config JSONB DEFAULT '{"style": "professional", "verbosity": "medium"}'::jsonb,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
 
-### `teammate_accounts`
-- `id`: uuid
-- `user_id`: uuid (owner)
-- `platform`: text (notion, google, linear)
-- `email`: text (the teammate's dedicated email)
-- `credentials_vault_id`: text (reference to encrypted storage for teammate login)
+### `workspaces`
+```sql
+CREATE TABLE workspaces (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  platform_name TEXT NOT NULL, -- 'Notion', 'GoogleDocs', 'Linear'
+  agent_email TEXT, -- The assistant's dedicated account email for this platform
+  credentials_vault_id UUID, -- Reference to an encrypted secret store or separate table
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
 
-### `workflows`
-- `id`: uuid
-- `user_id`: uuid
-- `temporal_workflow_id`: text
-- `status`: enum (running, waiting_approval, completed, failed)
-- `last_screenshot_url`: text (for dashboard)
-- `current_goal`: text
+### `jobs`
+```sql
+CREATE TABLE jobs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES profiles(id),
+  temporal_workflow_id TEXT UNIQUE, -- ID used in Temporal
+  status TEXT DEFAULT 'pending', -- 'running', 'waiting_approval', 'completed', 'failed'
+  last_resend_thread_id TEXT, -- Maps the job to a Resend email thread
+  steel_session_id TEXT, -- ID to reconnect to the virtual browser
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
 
-### `memory` (The "Supermemory")
-- `id`: uuid
-- `user_id`: uuid
-- `content`: text
-- `embedding`: vector(1536)
-- `metadata`: jsonb (platform, importance, type: "user_preference" | "sop" | "fact")
-- `created_at`: timestamptz
+### `approvals`
+```sql
+CREATE TABLE approvals (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  job_id UUID REFERENCES jobs(id),
+  action_type TEXT, -- 'delete', 'update', 'payment'
+  description TEXT, -- "Delete the 'Old Specs' folder"
+  screenshot_url TEXT, -- Visual proof from Steel
+  status TEXT DEFAULT 'pending', -- 'approved', 'rejected'
+  resend_message_id TEXT, -- ID of the approval email sent
+  decided_at TIMESTAMPTZ
+);
+```
 
-### `task_logs`
-- `id`: uuid
-- `workflow_id`: uuid
-- `action`: text
-- `reasoning`: text
-- `outcome`: text
-- `screenshot_url`: text
+### `memories` (Supermemory Complement)
+- While primary memory lives in Supermemory, we can store local vector backups if needed.
+```sql
+CREATE EXTENSION IF NOT EXISTS pgvector;
+CREATE TABLE memories (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES profiles(id),
+  content TEXT NOT NULL,
+  metadata JSONB,
+  embedding VECTOR(1536),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
