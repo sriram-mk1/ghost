@@ -1,7 +1,7 @@
 fastapi
 uvicorn
 temporalio
-google-generativeai
+google-genai
 resend
 supabase
 pydantic

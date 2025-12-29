@@ -1,4 +1,4 @@
-import google.generativeai as genai
+from google import genai
 from backend.core.config import get_settings
 
 settings = get_settings()
