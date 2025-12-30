@@ -23,10 +23,18 @@ class Settings(BaseSettings):
     SUPABASE_URL: str
     SUPABASE_SERVICE_ROLE_KEY: str
     
-    # --- Resend (Email Communication) ---
-    RESEND_API_KEY: str
-    RESEND_WEBHOOK_SECRET: str = ""  # Optional for local dev
-    AGENT_EMAIL_DOMAIN: str = "reluit.com"  # Domain for ghost@domain.com
+    # --- Resend (Email Communication) - DEPRECATED via AgentMail ---
+    RESEND_API_KEY: str = ""
+    RESEND_WEBHOOK_SECRET: str = ""
+    AGENT_EMAIL_DOMAIN: str = "reluit.com"
+
+    # --- AgentMail (New Email Infrastructure) ---
+    AGENTMAIL_API_KEY: str = ""
+    AGENTMAIL_WEBHOOK_SECRET: str = ""
+    
+    # --- Agent Identity ---
+    AGENT_EMAIL: str = "ghost@agentmail.to"
+    AGENT_PASSWORD: Optional[str] = None # For Google Services login
     
     # --- Steel (Virtual Computer) ---
     STEEL_API_KEY: str

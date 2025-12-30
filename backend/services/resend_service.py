@@ -1,6 +1,9 @@
 """
-Resend Email Service
+Resend Email Service (DEPRECATED)
 --------------------
+Note: This service is being replaced by agentmail_service.py.
+All features are being migrated to AgentMail.to infrastructure.
+
 Handles all email communication for the Ghost Teammate:
 1. Sending emails FROM the agent's identity
 2. Human-in-the-Loop approval requests

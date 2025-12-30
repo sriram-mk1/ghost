@@ -1,294 +1,322 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
-import { useAuth } from "@/lib/auth";
 import {
-  Terminal,
-  Cpu,
-  Zap,
-  Globe,
-  Shield,
-  Code2,
-  Fingerprint,
-  LayoutGrid,
   ArrowRight,
-  Plane
+  ChevronRight,
+  Command,
+  Globe,
+  LayoutGrid,
+  Shield,
+  Zap
 } from "lucide-react";
 
 export default function LandingPage() {
-  const { user } = useAuth();
-
   return (
-    <div className="min-h-screen bg-[#050505] text-white font-sans overflow-x-hidden flex flex-col selection:bg-yellow-500/30">
-
-      {/* Background Grid */}
-      <div className="fixed inset-0 z-0 pointer-events-none"
-        style={{
-          backgroundImage: 'linear-gradient(to right, #80808012 1px, transparent 1px), linear-gradient(to bottom, #80808012 1px, transparent 1px)',
-          backgroundSize: '24px 24px'
-        }}
-      />
+    <div className="min-h-screen bg-[#050505] text-white font-sans overflow-x-hidden selection:bg-orange-500/30">
 
       {/* Navbar */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#050505]/80 backdrop-blur-md border-b border-white/5 h-16">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#050505]/80 backdrop-blur-xl border-b border-white/5 h-16 transition-all duration-300">
         <div className="container mx-auto px-6 h-full flex items-center justify-between">
           <div className="flex items-center gap-12">
+            {/* Logo */}
             <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-8 h-8 bg-white rounded-sm flex items-center justify-center text-black font-bold text-xl group-hover:scale-95 transition-transform">
-                <Terminal size={18} strokeWidth={3} />
+              <div className="relative w-6 h-6 flex items-center justify-center">
+                {/* Stylized 'V' logo */}
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
+                  <path d="M12 22L3 4H7L12 14L17 4H21L12 22Z" fill="currentColor" />
+                </svg>
               </div>
+              <span className="font-semibold text-lg tracking-tight ml-1">Vertex</span>
             </Link>
-            <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
-              <Link href="#" className="hover:text-white transition-colors">Sessions API</Link>
-              <Link href="#" className="hover:text-white transition-colors">Pricing</Link>
-              <Link href="#" className="hover:text-white transition-colors">Blog</Link>
-              <Link href="#" className="hover:text-white transition-colors">Docs</Link>
-            </nav>
+
+            {/* Main Nav Links */}
+            <div className="hidden md:flex items-center gap-6 text-[13px] font-medium text-zinc-400">
+              {["Product", "Solutions", "Resources", "Enterprise", "Customers", "Pricing"].map((item) => (
+                <Link key={item} href="#" className="hover:text-white transition-colors">
+                  {item}
+                </Link>
+              ))}
+            </div>
           </div>
 
+          {/* Right Actions */}
           <div className="flex items-center gap-4">
-            {user ? (
-              <Link href="/dashboard" className="text-sm font-medium text-white hover:text-zinc-300 transition-colors">
-                Dashboard
-              </Link>
-            ) : (
-              <Link
-                href="/login"
-                className="text-sm font-medium bg-white/5 hover:bg-white/10 px-4 py-2 rounded-sm border border-white/10 transition-colors"
-              >
-                Log in / Sign Up
-              </Link>
-            )}
+            <Link href="/login" className="text-[13px] font-medium text-zinc-400 hover:text-white transition-colors">
+              Sign In
+            </Link>
+            <Link
+              href="/signup"
+              className="text-[13px] font-medium bg-white text-black hover:bg-zinc-200 px-4 py-2 rounded-[4px] transition-colors"
+            >
+              Login
+            </Link>
           </div>
         </div>
-      </header>
+      </nav>
 
       {/* Hero Section */}
-      <main className="pt-32 pb-20 relative z-10 flex-1">
-        <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+      <main className="pt-32 pb-20 relative z-10">
 
-          {/* Left: Content */}
-          <div className="max-w-xl space-y-8">
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tighter leading-[1] text-white">
-              Browser Infrastructure <br />
-              for AI Agents
-            </h1>
-            <p className="text-lg text-zinc-400 leading-relaxed max-w-md font-light">
-              Ghost is an open-source browser API that lets you control fleets of browsers in the cloud.
-            </p>
-            <div className="flex flex-wrap items-center gap-4 pt-2">
-              <Link
-                href="/signup"
-                className="px-8 py-3.5 bg-[#FFE700] hover:bg-[#E6D000] text-black font-bold rounded-sm transition-transform active:scale-95 text-sm uppercase tracking-wide"
-              >
-                Start For Free
-              </Link>
-              <Link
-                href="#"
-                className="px-8 py-3.5 bg-[#111] border border-white/10 hover:border-white/20 text-white font-medium rounded-sm transition-colors text-sm uppercase tracking-wide"
-              >
-                Read Docs
-              </Link>
-            </div>
+        {/* Hero Content */}
+        <section className="container mx-auto px-6 flex flex-col items-center text-center mb-20">
+
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] font-medium text-zinc-400 mb-8 hover:bg-white/10 transition-colors cursor-pointer">
+            <span className="text-orange-500 font-bold tracking-widest text-[9px] uppercase">New</span>
+            <span className="w-px h-3 bg-white/10 mx-1"></span>
+            <span>Introducing Vertex AI 2.0</span>
+            <ArrowRight size={12} className="ml-1" />
           </div>
 
-          {/* Right: Visual */}
-          <div className="relative h-[500px] w-full flex items-center justify-center select-none">
-            {/* Blue ASCII Background */}
-            <div className="absolute inset-0 z-0 overflow-hidden rounded-lg border border-white/10 bg-[#001524]">
-              <Image
-                src="/beach-sunset-ascii.png"
-                alt="ASCII Visualization"
-                fill
-                className="object-cover opacity-80 mix-blend-luminosity scale-110 contrast-125"
+          <h1 className="text-5xl sm:text-7xl font-medium tracking-tighter leading-[1.05] text-white max-w-4xl mx-auto mb-8">
+            Bridge the gap between <br />
+            <span className="text-zinc-400">clicks and capital</span>
+          </h1>
+
+          <p className="text-lg text-zinc-500 leading-relaxed max-w-xl mx-auto font-normal mb-10">
+            The developer-first engine for attribution, partner performance, and deep conversion intelligence.
+          </p>
+
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href="/start"
+              className="px-6 py-3 bg-[#1A1A1A] hover:bg-[#252525] text-white text-[13px] font-medium rounded-[4px] border border-white/10 transition-all flex items-center gap-2 group"
+            >
+              Get Started
+              <ChevronRight size={14} className="text-zinc-500 group-hover:text-white transition-colors" />
+            </Link>
+            <Link
+              href="/contact"
+              className="px-6 py-3 bg-transparent hover:bg-white/5 text-zinc-300 text-[13px] font-medium rounded-[4px] border border-white/10 transition-all"
+            >
+              Book a strategy call
+            </Link>
+          </div>
+        </section>
+
+        {/* Dashboard Preview */}
+        <section className="container mx-auto px-2 sm:px-6 relative">
+
+          {/* Dot Matrix Background Pattern (Orange/Red) */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] -z-10 opacity-30 select-none pointer-events-none"
+            style={{
+              backgroundImage: 'radial-gradient(#F97316 1px, transparent 1px)',
+              backgroundSize: '24px 24px',
+              maskImage: 'radial-gradient(ellipse at center, black 40%, transparent 70%)'
+            }}>
+          </div>
+
+          <div className="relative rounded-xl border border-white/10 bg-[#0A0A0A] shadow-2xl overflow-hidden max-w-5xl mx-auto">
+            {/* Window Controls */}
+            <div className="bg-[#0A0A0A] border-b border-white/5 px-4 py-3 flex items-center justify-between">
+              <div className="flex gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
+                <div className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
+                <div className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
+              </div>
+              <div className="text-[10px] items-center flex gap-2 text-zinc-600 font-mono bg-[#111] px-2 py-1 rounded border border-white/5">
+                <Shield size={10} />
+                secure://vertex.dashboard
+              </div>
+              <div className="w-8"></div> {/* Spacer */}
+            </div>
+
+            {/* Dashboard Content */}
+            <div className="p-8 bg-[#0A0A0A]">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h3 className="text-xl font-medium text-white mb-1">Your Links</h3>
+                  <p className="text-sm text-zinc-500">Manage, analyze, and optimize your partner links in real-time.</p>
+                </div>
+                <div className="flex gap-2">
+                  <button className="px-3 py-1.5 text-xs font-medium text-zinc-400 bg-white/5 border border-white/10 rounded hover:text-white hover:bg-white/10 transition-colors">
+                    Filter Data
+                  </button>
+                  <button className="px-3 py-1.5 text-xs font-medium text-white bg-orange-600/10 border border-orange-500/20 text-orange-500 rounded hover:bg-orange-600/20 transition-colors flex items-center gap-1.5">
+                    <span className="text-lg leading-none mb-0.5">+</span> Create Link
+                  </button>
+                </div>
+              </div>
+
+              {/* Stats Cards Row */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                {[
+                  { label: "Total Clicks", value: "2,420", change: "+12%" },
+                  { label: "Conversions", value: "843", change: "+5%" },
+                  { label: "Revenue", value: "$64,200", change: "+24%" },
+                  { label: "Conversion Rate", value: "4.8%", change: "-1%" }
+                ].map((stat) => (
+                  <div key={stat.label} className="bg-[#111] border border-white/5 p-4 rounded-lg">
+                    <div className="text-[11px] text-zinc-500 font-medium uppercase tracking-wider mb-2">{stat.label}</div>
+                    <div className="flex items-end justify-between">
+                      <div className="text-2xl font-medium text-white tracking-tight">{stat.value}</div>
+                      <div className={`text-xs font-medium ${stat.change.startsWith('+') ? 'text-green-500' : 'text-red-500'}`}>
+                        {stat.change}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Table / List */}
+              <div className="border border-white/5 rounded-lg overflow-hidden">
+                <div className="bg-[#111]/50 px-4 py-3 border-b border-white/5 grid grid-cols-12 gap-4 text-[11px] font-medium text-zinc-500 uppercase tracking-wider">
+                  <div className="col-span-4">Active Links</div>
+                  <div className="col-span-2 text-right hidden md:block">Events</div>
+                  <div className="col-span-2 text-right hidden md:block">Conv.</div>
+                  <div className="col-span-2 text-right hidden md:block">Value</div>
+                  <div className="col-span-8 md:col-span-2 text-right">Status</div>
+                </div>
+
+                {[
+                  { name: "vertex-link", domain: "v.inc/partner-alpha", events: "124k", conv: "3.2k", value: "$12.4k", status: "Active" },
+                  { name: "gradient.com", domain: "v.inc/gradient-flow", events: "98k", conv: "2.8k", value: "$9.1k", status: "Active" },
+                  { name: "assisi-client.com", domain: "v.inc/assisi-summer", events: "45k", conv: "1.1k", value: "$3.5k", status: "Active" },
+                  { name: "hyper-scale.io", domain: "v.inc/hyper-q4", events: "12k", conv: "240", value: "$980", status: "Paused" },
+                ].map((row, i) => (
+                  <div key={i} className="bg-[#0A0A0A] px-4 py-3 border-b border-white/5 grid grid-cols-12 gap-4 items-center group hover:bg-white/[0.02] transition-colors last:border-0">
+                    <div className="col-span-4 flex items-center gap-3">
+                      <div className="w-8 h-8 rounded bg-gradient-to-br from-zinc-800 to-zinc-900 border border-white/10 flex items-center justify-center text-white/40">
+                        <Command size={14} />
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium text-white">{row.name}</div>
+                        <div className="text-[11px] text-zinc-600 font-mono hidden sm:block">{row.domain}</div>
+                      </div>
+                    </div>
+                    <div className="col-span-2 text-right text-xs text-zinc-400 tabular-nums hidden md:block">{row.events}</div>
+                    <div className="col-span-2 text-right text-xs text-zinc-400 tabular-nums hidden md:block">{row.conv}</div>
+                    <div className="col-span-2 text-right text-xs text-white font-medium tabular-nums hidden md:block">{row.value}</div>
+                    <div className="col-span-8 md:col-span-2 text-right flex justify-end">
+                      <div className={`px-2 py-0.5 rounded-full text-[10px] font-medium inline-flex items-center gap-1.5 
+                        ${row.status === 'Active' ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-zinc-800 text-zinc-400 border border-zinc-700'}`}>
+                        {row.status === 'Active' && <div className="w-1 h-1 rounded-full bg-green-500 animate-pulse" />}
+                        {row.status}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Trusted By */}
+        <section className="py-20 border-b border-white/5">
+          <div className="container mx-auto px-6 text-center">
+            <p className="text-zinc-500 text-sm mb-10">Trusted by 1k companies and developers</p>
+            <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-40 grayscale mix-blend-screen">
+              <h4 className="text-xl font-bold tracking-tight text-white">OpenAI</h4>
+              <h4 className="text-xl font-bold tracking-tight text-white">Linear</h4>
+              <h4 className="text-xl font-bold tracking-tight text-white">DATADOG</h4>
+              <h4 className="text-xl font-bold tracking-tight text-white">RIPPLING</h4>
+              <h4 className="text-xl font-bold tracking-tight text-white">Figma</h4>
+              <h4 className="text-xl font-bold tracking-tight text-white">ramp</h4>
+            </div>
+          </div>
+        </section>
+
+        {/* Features / Foundation */}
+        <section className="py-32 container mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-20 items-center">
+            <div className="max-w-xl">
+              <p className="text-orange-500 text-xs font-bold tracking-widest uppercase mb-4">Core Technology</p>
+              <h2 className="text-4xl md:text-5xl font-medium text-white mb-6 tracking-tight">
+                The foundation <br />
+                of <span className="text-zinc-500">every journey</span>
+              </h2>
+              <p className="text-lg text-zinc-400 mb-8 leading-relaxed">
+                Deploy white-label reclamation nodes with industrial-grade logic, dynamic handoffs, geo-targeting, and deep link resolution.
+              </p>
+              <div className="flex items-center gap-4">
+                <button className="px-6 py-3 bg-white text-black font-medium text-sm rounded-[4px] hover:bg-zinc-200 transition-colors">
+                  Browse Edge Features
+                </button>
+                <button className="px-6 py-3 bg-transparent border border-white/10 text-white font-medium text-sm rounded-[4px] hover:bg-white/5 transition-colors">
+                  Learn More
+                </button>
+              </div>
+            </div>
+
+            {/* Feature Visualization (List) */}
+            <div className="relative">
+              {/* Dot Pattern again for consistency */}
+              <div className="absolute inset-0 z-0 opacity-20 pointer-events-none"
+                style={{
+                  backgroundImage: 'radial-gradient(#F97316 1px, transparent 1px)',
+                  backgroundSize: '24px 24px',
+                  maskImage: 'radial-gradient(circle at center, black 0%, transparent 80%)'
+                }}
               />
-              <div className="absolute inset-0 bg-blue-900/40 mix-blend-overlay" />
-            </div>
 
-            {/* Floating Windows (The "Comparison" Graphic) */}
-            <div className="absolute inset-x-8 inset-y-12 z-10 grid grid-cols-2 gap-6 items-center">
-
-              {/* Card 1: Code / Logic */}
-              <div className="bg-[#0A0A0A] border border-white/10 rounded-lg shadow-2xl overflow-hidden self-end translate-y-8 -rotate-1 relative z-20 hover:rotate-0 transition-transform duration-500">
-                <div className="bg-[#151515] px-4 py-2 flex items-center gap-2 border-b border-white/5">
-                  <div className="flex gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-red-500/20" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/20" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-green-500/20" />
-                  </div>
-                  <div className="text-[10px] font-mono text-zinc-500 ml-2">my_app.py</div>
-                </div>
-                <div className="p-4 space-y-3 font-mono text-xs">
-                  <div className="flex gap-2">
-                    <span className="text-purple-400">def</span>
-                    <span className="text-blue-400">find_fights</span>():
-                  </div>
-                  <div className="pl-4 text-zinc-400">
-                    goal = <span className="text-green-400">"SFO to NYC"</span>
-                  </div>
-                  <div className="pl-4 text-zinc-400">
-                    browser.goto(<span className="text-green-400">"kayak.com"</span>)
-                  </div>
-                  <div className="pl-4 text-zinc-400">
-                    <span className="text-zinc-500"># AI navigates UI...</span>
-                  </div>
-                </div>
-                <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px]" />
-                <div className="absolute bottom-4 left-4 right-4 bg-zinc-900 p-3 rounded border border-white/10 shadow-lg">
-                  <div className="flex items-center gap-2 text-white text-xs font-medium mb-1">
-                    <Plane size={12} /> Flight Found
-                  </div>
-                  <div className="text-[10px] text-zinc-400">SFO → JFK • $250</div>
-                </div>
-              </div>
-
-              {/* Card 2: Browser / Visual */}
-              <div className="bg-[#0A0A0A] border border-white/10 rounded-lg shadow-2xl overflow-hidden self-start -translate-y-8 rotate-2 relative z-10 hover:rotate-0 transition-transform duration-500 h-[220px]">
-                <div className="bg-[#151515] px-4 py-2 flex items-center justify-between border-b border-white/5">
-                  <div className="flex gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
-                  </div>
-                  <div className="bg-black/50 px-2 py-0.5 rounded text-[10px] text-zinc-500 font-mono">
-                    kayak.com
-                  </div>
-                </div>
-                <div className="p-6 relative h-full">
-                  {/* Mock UI */}
-                  <div className="space-y-4 opacity-50">
-                    <div className="h-2 w-1/3 bg-zinc-800 rounded" />
-                    <div className="space-y-2">
-                      <div className="h-12 w-full border border-zinc-800 rounded flex items-center px-4 justify-between">
-                        <div className="w-1/2 h-2 bg-zinc-800 rounded" />
-                        <div className="w-12 h-4 bg-blue-900/20 rounded" />
+              <div className="relative z-10 space-y-4">
+                {[
+                  { icon: <Zap size={16} />, label: "vertex-link", tag: "ROOT", time: "12ms", status: "Active" },
+                  { icon: <Globe size={16} />, label: "gradient.com", tag: "NODE", time: "45ms", status: "Active" },
+                  { icon: <LayoutGrid size={16} />, label: "assisi-client.com", tag: "EDGE", time: "28ms", status: "Active" },
+                ].map((item, i) => (
+                  <div key={i} className="bg-[#0A0A0A] border border-white/10 p-4 rounded-lg flex items-center justify-between shadow-lg">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 bg-zinc-900 rounded flex items-center justify-center text-white border border-white/5">
+                        {item.icon}
                       </div>
-                      <div className="h-12 w-full border border-zinc-800 rounded flex items-center px-4 justify-between">
-                        <div className="w-1/2 h-2 bg-zinc-800 rounded" />
-                        <div className="w-12 h-4 bg-blue-900/20 rounded" />
+                      <div>
+                        <div className="text-sm font-medium text-white flex items-center gap-2">
+                          {item.label}
+                          {item.tag && <span className="text-[9px] bg-red-500/20 text-red-500 px-1.5 py-0.5 rounded border border-red-500/20">{item.tag}</span>}
+                        </div>
+                        <div className="text-xs text-zinc-500 font-mono mt-0.5">v.inc/secure-route-{i + 10}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-6">
+                      <span className="text-xs text-zinc-500 font-mono">{item.time}</span>
+                      <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-green-500/10 border border-green-500/20 text-[10px] text-green-500 font-medium uppercase tracking-wide">
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                        {item.status}
                       </div>
                     </div>
                   </div>
-                  {/* Active Highlighter */}
-                  <div className="absolute top-20 left-6 right-6 h-12 border-2 border-yellow-500/50 rounded bg-yellow-500/5 flex items-center justify-center">
-                    <div className="bg-black text-yellow-500 text-[10px] px-2 py-0.5 rounded-full border border-yellow-500 absolute -top-3 left-2 font-mono">
-                      interaction_target
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-        </div>
-
-        {/* Stats Section */}
-        <div className="mt-32 border-y border-white/5 bg-black/50 backdrop-blur">
-          <div className="container mx-auto px-6 py-16">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="space-y-1">
-                <h3 className="text-5xl font-bold text-white tracking-tight">80B+</h3>
-                <p className="text-zinc-500 text-sm font-medium uppercase tracking-wider">Tokens Scraped</p>
-              </div>
-              <div className="space-y-1 md:border-l border-white/10 md:pl-12">
-                <h3 className="text-5xl font-bold text-white tracking-tight">200K+</h3>
-                <p className="text-zinc-500 text-sm font-medium uppercase tracking-wider">Browser Hours Served</p>
-              </div>
-              <div className="space-y-1 md:border-l border-white/10 md:pl-12">
-                <h3 className="text-5xl font-bold text-white tracking-tight">&lt;1s</h3>
-                <p className="text-zinc-500 text-sm font-medium uppercase tracking-wider">Avg. Session Start Time</p>
+                ))}
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Features Bento Grid */}
-        <div className="py-32 container mx-auto px-6">
-          <div className="text-center max-w-2xl mx-auto mb-20">
-            <h2 className="text-3xl md:text-5xl font-bold mb-6">Everything you need to <br /> scale your agents.</h2>
-            <p className="text-zinc-400 text-lg">Built for performance, reliability, and stealth from the ground up.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-6 gap-6 max-w-6xl mx-auto">
-            {/* Large Card 1 */}
-            <div className="col-span-1 md:col-span-4 bg-[#0A0A0A] border border-white/10 rounded-2xl p-8 relative overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative z-10">
-                <div className="w-12 h-12 bg-white/5 rounded-lg flex items-center justify-center mb-6 text-white border border-white/10">
-                  <Fingerprint size={24} />
-                </div>
-                <h3 className="text-xl font-bold mb-3">Anti-detection Fingerprinting</h3>
-                <p className="text-zinc-400 text-sm leading-relaxed max-w-sm">
-                  Advanced fingerprint masking technology ensures your agents blend in with real user traffic. Bypass bot detection and captchas effortlessly.
-                </p>
-              </div>
-              {/* Visual Decoration */}
-              <div className="absolute bottom-0 right-0 w-64 h-32 bg-gradient-to-t from-blue-500/10 to-transparent blur-2xl" />
-            </div>
-
-            {/* Small Card 2 */}
-            <div className="col-span-1 md:col-span-2 bg-[#0A0A0A] border border-white/10 rounded-2xl p-8 relative overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="w-12 h-12 bg-white/5 rounded-lg flex items-center justify-center mb-6 text-white border border-white/10">
-                <Zap size={24} />
-              </div>
-              <h3 className="text-xl font-bold mb-3">Sub-ms Latency</h3>
-              <p className="text-zinc-400 text-sm leading-relaxed">
-                Optimized for speed with global edge locations.
-              </p>
-            </div>
-
-            {/* Small Card 3 */}
-            <div className="col-span-1 md:col-span-2 bg-[#0A0A0A] border border-white/10 rounded-2xl p-8 relative overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="w-12 h-12 bg-white/5 rounded-lg flex items-center justify-center mb-6 text-white border border-white/10">
-                <Code2 size={24} />
-              </div>
-              <h3 className="text-xl font-bold mb-3">Simple API</h3>
-              <p className="text-zinc-400 text-sm leading-relaxed">
-                Control browsers with standard WebSocket protocols.
-              </p>
-            </div>
-
-            {/* Large Card 4 */}
-            <div className="col-span-1 md:col-span-4 bg-[#0A0A0A] border border-white/10 rounded-2xl p-8 relative overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative z-10 flex flex-col md:flex-row gap-8 items-start md:items-center">
-                <div className="flex-1">
-                  <div className="w-12 h-12 bg-white/5 rounded-lg flex items-center justify-center mb-6 text-white border border-white/10">
-                    <Globe size={24} />
-                  </div>
-                  <h3 className="text-xl font-bold mb-3">Residential Proxies</h3>
-                  <p className="text-zinc-400 text-sm leading-relaxed max-w-sm">
-                    Access millions of residential IP addresses to route your traffic through legitimate devices worldwide.
-                  </p>
-                </div>
-                <div className="flex-1 w-full bg-black/50 rounded-lg border border-white/10 p-4 font-mono text-[10px] text-zinc-500">
-                  <div><span className="text-purple-400">await</span> browser.connect({`{`}</div>
-                  <div className="pl-4">proxy: <span className="text-green-400">"residential"</span>,</div>
-                  <div className="pl-4">country: <span className="text-green-400">"US"</span></div>
-                  <div>{`}`})</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        </section>
 
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/5 py-12 bg-[#0A0A0A] relative z-10">
-        <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-3">
-            <div className="w-6 h-6 bg-white text-black rounded-sm flex items-center justify-center font-bold text-xs">
-              <Terminal size={14} />
-            </div>
-            <span className="font-semibold text-zinc-400">Ghost Inc.</span>
+      <footer className="border-t border-white/5 py-12 bg-[#050505]">
+        <div className="container mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div>
+            <h5 className="text-white font-bold mb-4">Product</h5>
+            <ul className="space-y-2 text-sm text-zinc-500">
+              <li><Link href="#" className="hover:text-white transition-colors">Features</Link></li>
+              <li><Link href="#" className="hover:text-white transition-colors">Integrations</Link></li>
+              <li><Link href="#" className="hover:text-white transition-colors">Pricing</Link></li>
+            </ul>
           </div>
-          <div className="text-xs text-zinc-600">
-            © 2024 Ghost Inc. All rights reserved.
+          <div>
+            <h5 className="text-white font-bold mb-4">Resources</h5>
+            <ul className="space-y-2 text-sm text-zinc-500">
+              <li><Link href="#" className="hover:text-white transition-colors">Documentation</Link></li>
+              <li><Link href="#" className="hover:text-white transition-colors">API Reference</Link></li>
+              <li><Link href="#" className="hover:text-white transition-colors">Status</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h5 className="text-white font-bold mb-4">Company</h5>
+            <ul className="space-y-2 text-sm text-zinc-500">
+              <li><Link href="#" className="hover:text-white transition-colors">About</Link></li>
+              <li><Link href="#" className="hover:text-white transition-colors">Blog</Link></li>
+              <li><Link href="#" className="hover:text-white transition-colors">Careers</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h5 className="text-white font-bold mb-4">Legal</h5>
+            <ul className="space-y-2 text-sm text-zinc-500">
+              <li><Link href="#" className="hover:text-white transition-colors">Privacy</Link></li>
+              <li><Link href="#" className="hover:text-white transition-colors">Terms</Link></li>
+            </ul>
           </div>
         </div>
       </footer>

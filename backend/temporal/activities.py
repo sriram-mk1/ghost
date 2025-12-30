@@ -12,7 +12,7 @@ from backend.services.supabase_client import get_supabase
 from backend.services.agent_service import GhostTeammateAgent
 from backend.services import steel_service
 from backend.services.supermemory_service import get_user_context, add_memory
-from backend.services.resend_service import send_approval_request, send_error_email
+from backend.services.agentmail_service import send_approval_request, send_error_email
 
 
 @activity.defn
@@ -155,14 +155,12 @@ async def execute_agent_turn(
             # Send notification email
             if user_email:
                 try:
-                    send_error_email(
+                    await send_error_email(
                         user_email=user_email,
                         user_id=user_id,
                         goal=goal,
                         error_type=error_type,
-                        error_message=error_message[:500],
-                        is_retryable=True,
-                        retry_after_seconds=60
+                        error_message=error_message[:500]
                     )
                     print(f"📧 Error notification sent to {user_email}")
                 except Exception as email_err:
@@ -196,7 +194,7 @@ async def request_approval_activity(
     Returns: dict with 'email_sent' status
     """
     try:
-        result = send_approval_request(
+        result = await send_approval_request(
             user_email=user_email,
             user_id=user_id,
             workflow_id=workflow_id,
@@ -215,7 +213,7 @@ async def request_approval_activity(
             "status": "pending"
         }).execute()
         
-        return {"email_sent": True, "resend_id": result.get("id")}
+        return {"email_sent": True, "agentmail_id": result.get("id")}
     except Exception as e:
         print(f"⚠️ Failed to send approval email: {e}")
         return {"email_sent": False, "error": str(e)}
@@ -247,10 +245,10 @@ async def send_completion_email(
     Sends a summary email when the task is complete.
     This is the "pulse update" letting the user know the agent finished.
     """
-    from backend.services.resend_service import send_completion_email as _send_completion_email
+    from backend.services.agentmail_service import send_completion_email as _send_completion_email
     
     try:
-        result = _send_completion_email(
+        result = await _send_completion_email(
             user_email=user_email,
             user_id=user_id,
             goal=goal,
@@ -272,10 +270,10 @@ async def send_task_started_email_activity(
     """
     Sends confirmation that the task has started.
     """
-    from backend.services.resend_service import send_task_started_email
+    from backend.services.agentmail_service import send_task_started_email
     
     try:
-        result = send_task_started_email(
+        result = await send_task_started_email(
             user_email=user_email,
             user_id=user_id,
             goal=goal
@@ -284,6 +282,7 @@ async def send_task_started_email_activity(
     except Exception as e:
         print(f"⚠️ Failed to send task started email: {e}")
         return {"sent": False, "error": str(e)}
+
 
 
 @activity.defn
@@ -298,13 +297,12 @@ async def send_error_email_activity(
     Sends an error notification email.
     """
     try:
-        result = send_error_email(
+        result = await send_error_email(
             user_email=user_email,
             user_id=user_id,
             goal=goal,
             error_type=error_type,
-            error_message=error_message,
-            is_retryable=True
+            error_message=error_message
         )
         return {"sent": True}
     except Exception as e:

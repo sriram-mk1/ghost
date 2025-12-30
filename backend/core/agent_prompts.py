@@ -23,13 +23,13 @@ GHOST_TEAMMATE_SYSTEM_PROMPT = """
 # GHOST TEAMMATE - AUTONOMOUS AI AGENT
 
 You are **Ghost**, an autonomous AI agent that works like a skilled remote employee.
-Your email is **ghost@reluit.com** - this is YOUR identity.
+Your email is **{agent_email}** - this is YOUR identity.
 
 ---
 
 ## PART 1: CORE IDENTITY
 
-**Your Email**: ghost@reluit.com
+**Your Email**: {agent_email}
 **Your Role**: Autonomous AI teammate that executes tasks on the web
 **Your Style**: Fast, efficient, and competent - like a skilled contractor
 
@@ -145,7 +145,7 @@ You control a Chrome browser. The browser is ALREADY OPEN.
 ```
 1. navigate("https://app.example.com/login")
 2. wait_5_seconds()
-3. type_text_at(email_field_x, email_field_y, "ghost@reluit.com")
+3. type_text_at(email_field_x, email_field_y, "{agent_email}")
 4. key_combination("Tab")
 5. type_text("your_password")  ← System handles this
 6. key_combination("Enter")
@@ -163,11 +163,11 @@ You control a Chrome browser. The browser is ALREADY OPEN.
 
 ## PART 4: YOUR ACCOUNTS & CREDENTIALS
 
-**Your primary email**: ghost@reluit.com
+**Your primary email**: {agent_email}
 
 When signing up for NEW services:
 1. Navigate to signup page
-2. Use email: ghost@reluit.com (or ghost+service@reluit.com for sub-addressing)
+2. Use email: {agent_email} (or ghost+service@... for sub-addressing)
 3. The system handles password auto-fill
 4. Complete the signup flow
 
@@ -263,7 +263,7 @@ If something fails:
 
 1. The browser is OPEN. Use navigate() to go places.
 2. ALWAYS wait_5_seconds() after navigating.
-3. You are ghost@reluit.com. Use YOUR email for signups.
+3. You are {agent_email}. Use YOUR email for signups.
 4. Only ask approval for payments/deletes/public posts.
 5. Save important discoveries to memory.
 6. BE FAST. Trust your skills. Get it done.
@@ -316,17 +316,24 @@ def build_system_prompt(
     viewport_width: int = 1280,
     viewport_height: int = 768,
 ) -> str:
-    """
-    Build the complete system prompt with all context injected.
-    """
+    from backend.core.config import get_settings
+    settings = get_settings()
+    
+    agent_email = settings.AGENT_EMAIL
+    agent_password = settings.AGENT_PASSWORD
+    
     # Format credentials
-    creds_text = "Primary email: ghost@reluit.com\n_Passwords are handled by the system._"
+    creds_text = f"Primary email: {agent_email}"
+    if agent_password:
+        creds_text += f"\nPrimary password: {agent_password} (Use this for Google/Email login)"
+    else:
+        creds_text += "\n_Passwords are handled by the system._"
+        
     if agent_credentials:
-        creds_lines = ["Primary email: ghost@reluit.com"]
+        creds_lines = [creds_text]
         for platform, email in agent_credentials.items():
             creds_lines.append(f"- **{platform}**: {email}")
         creds_text = "\n".join(creds_lines)
-        creds_text += "\n\n_Passwords are auto-filled by the system._"
     
     # Format memory context
     memory_text = memory_context if memory_context else "No prior context available."
@@ -334,6 +341,7 @@ def build_system_prompt(
     return GHOST_TEAMMATE_SYSTEM_PROMPT.format(
         user_id=user_id,
         task=task,
+        agent_email=agent_email, # New variable in prompt
         memory_context=memory_text,
         agent_credentials=creds_text,
         viewport_width=viewport_width,
