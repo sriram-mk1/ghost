@@ -27,7 +27,3 @@ dist/
 .vscode/
 .idea/
 .DS_Store
-
-# Temporal
-temporal/
-

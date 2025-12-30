@@ -4,7 +4,7 @@ from backend.core.config import get_settings
 settings = get_settings()
 genai.configure(api_key=settings.GEMINI_API_KEY)
 
-def get_agent_response(prompt: str, screenshot_bytes: bytes = None, model_name: str = "gemini-3-flash"):
+def get_agent_response(prompt: str, screenshot_bytes: bytes = None, model_name: str = "gemini-3-flash-preview"):
     """
     Multimodal reasoning. If a screenshot is provided, Gemini will be able to view the Steel headless browser.
     """
@@ -17,6 +17,6 @@ def get_agent_response(prompt: str, screenshot_bytes: bytes = None, model_name: 
             "data": screenshot_bytes
         })
 
-    response = model.generate_contetn(content)
+    response = model.generate_content(content)
     return response.text
 
