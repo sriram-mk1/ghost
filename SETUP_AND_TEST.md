@@ -45,9 +45,9 @@ TEMPORAL_NAMESPACE=default
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
-# Resend (get from https://resend.com/api-keys)
-RESEND_API_KEY=re_xxxxxxxxxxxxx
-RESEND_WEBHOOK_SECRET=  # Leave empty for now
+# AgentMail (get from https://agentmail.to)
+AGENTMAIL_API_KEY=your_agentmail_key
+AGENTMAIL_WEBHOOK_SECRET=  # Optional
 
 # Steel (get from https://app.steel.dev/settings/api-keys)
 STEEL_API_KEY=your-steel-api-key
@@ -59,6 +59,8 @@ SUPERMEMORY_API_KEY=
 # App URLs (update BACKEND_URL after starting ngrok)
 BACKEND_URL=http://localhost:8000
 FRONTEND_URL=http://localhost:3000
+AGENT_EMAIL=ghost@agentmail.to
+AGENT_PASSWORD=your_password
 ```
 
 ### Frontend (`frontend/.env.local`)
@@ -122,7 +124,7 @@ source venv/bin/activate
 uvicorn backend.main:app --reload --port 8000
 ```
 
-### Terminal 4: ngrok (for Resend webhooks)
+### Terminal 4: ngrok (for Webhooks)
 ```bash
 ngrok http 8000
 ```
@@ -143,15 +145,15 @@ npm run dev
 
 ---
 
-## Step 4: Configure Resend Webhook
+## Step 4: Configure AgentMail Webhook
 
-1. Go to [Resend Webhooks](https://resend.com/webhooks)
+1. Go to your AgentMail Inbox Settings
 2. Add a new webhook:
-   - **URL:** `https://your-ngrok-url.ngrok.io/webhooks/resend/inbound`
-   - **Events:** Select `email.received` (for inbound emails)
-3. Copy the webhook secret and add to `backend/.env`:
+   - **URL:** `https://your-ngrok-url.ngrok.io/webhooks/agentmail/inbound`
+   - **Events:** Select `message.created` (or equivalent for inbound)
+3. (Optional) Copy the webhook secret and add to `backend/.env`:
    ```env
-   RESEND_WEBHOOK_SECRET=whsec_xxxxx
+   AGENTMAIL_WEBHOOK_SECRET=your_secret
    ```
 
 ---
@@ -187,8 +189,8 @@ Open http://localhost:8233 to see:
 - Activity history
 - Signal/Query capabilities
 
-### Test 6: Email Trigger (requires Resend domain)
-Send an email to `assistant+test-user@your-verified-domain.com`
+### Test 6: Email Trigger (requires AgentMail)
+Send an email to `ghost@agentmail.to` (or your configured agent email)
 - This triggers a new workflow
 - Check Temporal UI for the workflow
 
@@ -212,10 +214,10 @@ temporal server start-dev
 - Check Steel API key is correct
 - Make sure `NEXT_PUBLIC_STEEL_API_KEY` is set in frontend
 
-### Resend webhooks not working
+### Webhooks not working
 - Verify ngrok is running and URL is correct
 - Check webhook secret matches
-- Test with: `curl -X POST https://your-ngrok-url/webhooks/resend/inbound -H "Content-Type: application/json" -d '{"from":"test@test.com","to":["assistant+test@domain.com"],"subject":"Test","text":"Hello"}'`
+- Test with: `curl -X POST https://your-ngrok-url/webhooks/agentmail/inbound -H "Content-Type: application/json" -d '{"message": {"id": "123", "from": "test@test.com", "subject": "Test", "text": "Hello", "body_included": true}}'`
 
 ### Database errors
 - Make sure schema is pushed: `npx supabase db push`
@@ -241,9 +243,9 @@ temporal server start-dev
 |----------|--------|-------------|
 | `/` | GET | Health check |
 | `/tasks/launch` | POST | Launch a new task |
-| `/webhooks/resend/inbound` | POST | Receive inbound emails |
-| `/webhooks/resend/approve` | GET | Approve HITL action |
-| `/webhooks/resend/reject` | GET | Reject HITL action |
+| `/webhooks/agentmail/inbound` | POST | Receive inbound emails |
+| `/webhooks/agentmail/approve` | GET | Approve HITL action |
+| `/webhooks/agentmail/reject` | GET | Reject HITL action |
 | `/agent/accounts/create` | POST | Create agent account |
 | `/agent/accounts` | GET | List agent accounts |
 

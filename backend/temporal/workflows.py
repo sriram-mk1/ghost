@@ -98,7 +98,7 @@ class GhostTeammateWorkflow:
         }
 
     @workflow.run
-    async def run(self, goal: str, user_id: str, user_email: str) -> str:
+    async def run(self, goal: str, user_id: str, user_email: str, thread_id: str = None) -> str:
         """
         Main workflow execution.
         
@@ -106,6 +106,7 @@ class GhostTeammateWorkflow:
             goal: The user's task/request
             user_id: Unique user identifier
             user_email: Email to send updates to
+            thread_id: Optional thread ID to reply to (if triggered by email)
             
         Returns:
             Final status message
@@ -114,11 +115,20 @@ class GhostTeammateWorkflow:
         
         try:
             # ============================================
-            # STEP 1: Initialize Job Tracking
+            # STEP 1: Initialize Job Tracking & Notify
             # ============================================
             job_id = await workflow.execute_activity(
                 create_job_record,
                 args=[user_id, goal],
+                start_to_close_timeout=timedelta(seconds=30)
+            )
+            
+            # Send "I'm on it" email (replying to thread if exists)
+            # This confirms to the user that the agent is actually working
+            from backend.temporal.activities import send_task_started_email_activity
+            await workflow.execute_activity(
+                send_task_started_email_activity,
+                args=[user_email, user_id, goal, thread_id],
                 start_to_close_timeout=timedelta(seconds=30)
             )
             

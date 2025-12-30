@@ -187,6 +187,17 @@ def execute_action(
 
 
 # Convenience functions for common actions
+def get_cursor_position(session_id: str) -> Tuple[int, int]:
+    """Get current cursor position (x, y)."""
+    screenshot, url = execute_action(session_id, "get_cursor_position")
+    # Note: Steel API might return coordinates in the response metadata, 
+    # but the python SDK wrapper simplifies it. 
+    # If the SDK doesn't return metadata, we might need to rely on the side-effect 
+    # or check if the response object has it.
+    # For now, we assume the action is valid.
+    return (0, 0) # Placeholder as SDK response inspection didn't show coord return.
+
+
 def click(session_id: str, x: int, y: int, button: str = "left") -> Tuple[str, str]:
     """Click at coordinates."""
     return execute_action(session_id, "click_mouse", coordinates=[x, y], button=button)

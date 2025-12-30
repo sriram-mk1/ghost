@@ -127,54 +127,45 @@ async def agentmail_inbound_webhook(request: Request):
     
     raw_payload = await request.json()
     
-    print(f"📨 Inbound AgentMail webhook received:")
-    # print(f"   Payload: {raw_payload}") 
+    print(f"📨 Inbound AgentMail webhook received")
     
-    # Adapt to AgentMail payload structure
-    # Based on docs, it might be a list of events or a single event
-    # We look for "message_id" or "id"
+    # Validate structure
+    message_data = {}
     
-    # Safe extraction logic
-    payload = raw_payload
-    if "webhooks" in raw_payload:
-        # It's a list response? unlikely for a webhook event
-        pass
-    
-    # AgentMail webhook structure often has the resource ID in it
-    # We will assume a structure like: {"event": "message.created", "data": {...}} or flat
-    # If we can't find specific docs, we look for common fields
-    
-    email_id = payload.get("message_id") or payload.get("id") or payload.get("data", {}).get("id")
-    
-    # Metadata for immediate use
-    subject = payload.get("subject") or payload.get("data", {}).get("subject")
-    from_email_raw = payload.get("from_email") or payload.get("from") or payload.get("data", {}).get("from", "")
-    to_emails = payload.get("to") or payload.get("data", {}).get("to", [])
-    
-    # Fetch full content
-    text_content = ""
-    if email_id:
-        print(f"📧 Fetching full email content from AgentMail API for {email_id}...")
-        email_data = await get_email_content_by_id(email_id)
-        
-        if email_data.get("success"):
-            text_content = email_data.get("text", "")
-            subject = email_data.get("subject", subject) or "No Subject"
-            
-            # Use API metadata if webhook was sparse
-            if not from_email_raw:
-                from_email_raw = email_data.get("from", "")
-        else:
-            print(f"⚠️ Failed to fetch email content: {email_data.get('error')}")
-            # Fallback to payload body if available
-            text_content = payload.get("text") or payload.get("body") or ""
-            
+    # Check for direct message object (typical AgentMail webhook structure as provided by user)
+    if "message" in raw_payload:
+        message_data = raw_payload["message"]
+    elif "data" in raw_payload:
+        message_data = raw_payload["data"]
     else:
-        print("⚠️ No message_id found in webhook payload. Using raw body if available.")
-        text_content = payload.get("text") or payload.get("body") or ""
+        # Fallback for flat structure or unknown
+        message_data = raw_payload
+
+    # Extract immediate fields
+    # Payload example: "from": "Name <email>", "subject": "Sub", "text": "Body", "extracted_text": "Body"
+    subject = message_data.get("subject") or "No Subject"
+    from_email_raw = message_data.get("from") or message_data.get("from_") or ""
+    
+    # Content extraction strategy
+    text_content = message_data.get("text") or message_data.get("extracted_text") or message_data.get("body") or ""
+    
+    # If content is missing but we have an ID, try fetching (fallback)
+    if not text_content and (message_data.get("message_id") or message_data.get("id")):
+        email_id = message_data.get("message_id") or message_data.get("id")
+        print(f"📧 Content missing in payload, fetching full email {email_id}...")
+        
+        email_details = await get_email_content_by_id(email_id)
+        if email_details.get("success"):
+            text_content = email_details.get("text", "")
+            if not subject or subject == "No Subject":
+                subject = email_details.get("subject", subject)
+            if not from_email_raw:
+                from_email_raw = email_details.get("from", "")
+        else:
+             print(f"⚠️ Failed to fetch email content: {email_details.get('error')}")
 
     if not text_content:
-        print("❌ No text content found. Ignoring.")
+        print("❌ No text content found in webhook. Ignoring.")
         return {"status": "ignored", "reason": "no_content"}
 
     # =========================================================================
@@ -261,7 +252,7 @@ async def resend_inbound_webhook_deprecated(request: Request):
     # ... (Keep existing logic if needed, or redirect/error)
     # For now, we keep it functional but logging warning
     print("⚠️ WARNING: Received deprecated Resend webhook")
-    return await resend_inbound_webhook(request)
+    return {"status": "ignored", "message": "This endpoint is deprecated. Please use AgentMail webhooks."}
 
 
 # Re-using logic helper for approvals to avoid duplication

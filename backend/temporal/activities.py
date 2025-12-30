@@ -125,6 +125,13 @@ async def execute_agent_turn(
         # Execute one reasoning-action cycle
         result = await agent.execute_turn(goal)
         
+        # Check for kill switch signal in the result (if agent self-terminated due to prompt instructions)
+        # OR if we detect a specific "STOP" signal from the environment (not yet implemented fully, but good to have hooks)
+        if "stopped_by_user" in result.get("reasoning", "").lower():
+             print("🛑 Agent stopped via Kill Switch.")
+             result["finished"] = True
+             result["error"] = "stopped_by_user"
+
         # Log the turn to Supabase for the dashboard feed
         supabase = get_supabase()
         supabase.table("task_logs").insert({
@@ -265,10 +272,12 @@ async def send_completion_email(
 async def send_task_started_email_activity(
     user_email: str,
     user_id: str,
-    goal: str
+    goal: str,
+    thread_id: str = None
 ) -> dict:
     """
     Sends confirmation that the task has started.
+    If a thread_id is provided, it replies to that email thread.
     """
     from backend.services.agentmail_service import send_task_started_email
     
@@ -276,7 +285,8 @@ async def send_task_started_email_activity(
         result = await send_task_started_email(
             user_email=user_email,
             user_id=user_id,
-            goal=goal
+            goal=goal,
+            thread_id=thread_id
         )
         return {"sent": True}
     except Exception as e:

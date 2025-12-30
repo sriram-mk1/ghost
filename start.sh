@@ -182,8 +182,8 @@ if [ "$SKIP_NGROK" != "true" ]; then
     if [ -n "$NGROK_URL" ]; then
         echo -e "${GREEN}✓ ngrok tunnel: ${CYAN}$NGROK_URL${NC}"
         echo ""
-        echo -e "${YELLOW}📧 Set this as your Resend webhook URL:${NC}"
-        echo -e "   ${CYAN}$NGROK_URL/webhooks/resend/inbound${NC}"
+        echo -e "${YELLOW}📧 Set this as your AgentMail webhook URL:${NC}"
+        echo -e "   ${CYAN}$NGROK_URL/webhooks/agentmail/inbound${NC}"
     else
         echo -e "${YELLOW}⚠️  Could not get ngrok URL. Check http://localhost:4040${NC}"
     fi

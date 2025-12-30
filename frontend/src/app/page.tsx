@@ -1,326 +1,374 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import {
+  Terminal,
   ArrowRight,
-  ChevronRight,
-  Command,
+  Play,
+  Mail,
   Globe,
-  LayoutGrid,
+  Zap,
   Shield,
-  Zap
+  Cpu,
+  Layers,
+  Activity
 } from "lucide-react";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#050505] text-white font-sans overflow-x-hidden selection:bg-orange-500/30">
+    <div className="min-h-screen bg-[#09090b] text-white font-sans selection:bg-blue-500/30 overflow-x-hidden">
 
-      {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#050505]/80 backdrop-blur-xl border-b border-white/5 h-16 transition-all duration-300">
-        <div className="container mx-auto px-6 h-full flex items-center justify-between">
-          <div className="flex items-center gap-12">
-            {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 group">
-              <div className="relative w-6 h-6 flex items-center justify-center">
-                {/* Stylized 'V' logo */}
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
-                  <path d="M12 22L3 4H7L12 14L17 4H21L12 22Z" fill="currentColor" />
-                </svg>
-              </div>
-              <span className="font-semibold text-lg tracking-tight ml-1">Vertex</span>
-            </Link>
+      {/* Global Border Wrapper for Vertical Lines */}
+      <div className="max-w-[1400px] mx-auto border-x border-white/5 min-h-screen relative shadow-[0_0_100px_rgba(0,0,0,0.5)] bg-[#09090b]">
 
-            {/* Main Nav Links */}
-            <div className="hidden md:flex items-center gap-6 text-[13px] font-medium text-zinc-400">
-              {["Product", "Solutions", "Resources", "Enterprise", "Customers", "Pricing"].map((item) => (
-                <Link key={item} href="#" className="hover:text-white transition-colors">
-                  {item}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* Right Actions */}
-          <div className="flex items-center gap-4">
-            <Link href="/login" className="text-[13px] font-medium text-zinc-400 hover:text-white transition-colors">
-              Sign In
-            </Link>
-            <Link
-              href="/signup"
-              className="text-[13px] font-medium bg-white text-black hover:bg-zinc-200 px-4 py-2 rounded-[4px] transition-colors"
-            >
-              Login
-            </Link>
-          </div>
+        {/* Background Grid Pattern for texture */}
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03]"
+          style={{ backgroundImage: 'url("/grid-pixel.png")', backgroundSize: '100px 100px' }}>
         </div>
-      </nav>
 
-      {/* Hero Section */}
-      <main className="pt-32 pb-20 relative z-10">
-
-        {/* Hero Content */}
-        <section className="container mx-auto px-6 flex flex-col items-center text-center mb-20">
-
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] font-medium text-zinc-400 mb-8 hover:bg-white/10 transition-colors cursor-pointer">
-            <span className="text-orange-500 font-bold tracking-widest text-[9px] uppercase">New</span>
-            <span className="w-px h-3 bg-white/10 mx-1"></span>
-            <span>Introducing Vertex AI 2.0</span>
-            <ArrowRight size={12} className="ml-1" />
-          </div>
-
-          <h1 className="text-5xl sm:text-7xl font-medium tracking-tighter leading-[1.05] text-white max-w-4xl mx-auto mb-8">
-            Bridge the gap between <br />
-            <span className="text-zinc-400">clicks and capital</span>
-          </h1>
-
-          <p className="text-lg text-zinc-500 leading-relaxed max-w-xl mx-auto font-normal mb-10">
-            The developer-first engine for attribution, partner performance, and deep conversion intelligence.
-          </p>
-
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href="/start"
-              className="px-6 py-3 bg-[#1A1A1A] hover:bg-[#252525] text-white text-[13px] font-medium rounded-[4px] border border-white/10 transition-all flex items-center gap-2 group"
-            >
-              Get Started
-              <ChevronRight size={14} className="text-zinc-500 group-hover:text-white transition-colors" />
-            </Link>
-            <Link
-              href="/contact"
-              className="px-6 py-3 bg-transparent hover:bg-white/5 text-zinc-300 text-[13px] font-medium rounded-[4px] border border-white/10 transition-all"
-            >
-              Book a strategy call
-            </Link>
-          </div>
-        </section>
-
-        {/* Dashboard Preview */}
-        <section className="container mx-auto px-2 sm:px-6 relative">
-
-          {/* Dot Matrix Background Pattern (Orange/Red) */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] -z-10 opacity-30 select-none pointer-events-none"
-            style={{
-              backgroundImage: 'radial-gradient(#F97316 1px, transparent 1px)',
-              backgroundSize: '24px 24px',
-              maskImage: 'radial-gradient(ellipse at center, black 40%, transparent 70%)'
-            }}>
-          </div>
-
-          <div className="relative rounded-xl border border-white/10 bg-[#0A0A0A] shadow-2xl overflow-hidden max-w-5xl mx-auto">
-            {/* Window Controls */}
-            <div className="bg-[#0A0A0A] border-b border-white/5 px-4 py-3 flex items-center justify-between">
-              <div className="flex gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
-                <div className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
-                <div className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
+        {/* Fixed Navbar */}
+        <nav className="fixed top-0 left-0 right-0 z-50 bg-[#09090b]/90 backdrop-blur-md border-b border-white/5">
+          <div className="max-w-[1400px] mx-auto flex h-16 items-center justify-between px-6 md:px-8 border-x border-transparent">
+            {/* Inner container matches the max-w of the global wrapper essentially, but we need to account for the border lines. 
+                Actually, to make lines connect perfectly, we align this inside. 
+            */}
+            <div className="flex items-center gap-12">
+              <Link href="/" className="flex items-center gap-2 group">
+                <div className="w-6 h-6 bg-white rounded-[1px] flex items-center justify-center text-black">
+                  <Terminal size={14} strokeWidth={2} />
+                </div>
+              </Link>
+              <div className="hidden md:flex items-center gap-8 text-[13px] font-light text-zinc-400">
+                <Link href="#" className="hover:text-white transition-colors">Platform</Link>
+                <Link href="#" className="hover:text-white transition-colors">Solutions</Link>
+                <Link href="#" className="hover:text-white transition-colors">Pricing</Link>
+                <Link href="#" className="hover:text-white transition-colors">Docs</Link>
               </div>
-              <div className="text-[10px] items-center flex gap-2 text-zinc-600 font-mono bg-[#111] px-2 py-1 rounded border border-white/5">
-                <Shield size={10} />
-                secure://vertex.dashboard
-              </div>
-              <div className="w-8"></div> {/* Spacer */}
             </div>
 
-            {/* Dashboard Content */}
-            <div className="p-8 bg-[#0A0A0A]">
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <h3 className="text-xl font-medium text-white mb-1">Your Links</h3>
-                  <p className="text-sm text-zinc-500">Manage, analyze, and optimize your partner links in real-time.</p>
-                </div>
-                <div className="flex gap-2">
-                  <button className="px-3 py-1.5 text-xs font-medium text-zinc-400 bg-white/5 border border-white/10 rounded hover:text-white hover:bg-white/10 transition-colors">
-                    Filter Data
-                  </button>
-                  <button className="px-3 py-1.5 text-xs font-medium text-white bg-orange-600/10 border border-orange-500/20 text-orange-500 rounded hover:bg-orange-600/20 transition-colors flex items-center gap-1.5">
-                    <span className="text-lg leading-none mb-0.5">+</span> Create Link
-                  </button>
-                </div>
-              </div>
-
-              {/* Stats Cards Row */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                {[
-                  { label: "Total Clicks", value: "2,420", change: "+12%" },
-                  { label: "Conversions", value: "843", change: "+5%" },
-                  { label: "Revenue", value: "$64,200", change: "+24%" },
-                  { label: "Conversion Rate", value: "4.8%", change: "-1%" }
-                ].map((stat) => (
-                  <div key={stat.label} className="bg-[#111] border border-white/5 p-4 rounded-lg">
-                    <div className="text-[11px] text-zinc-500 font-medium uppercase tracking-wider mb-2">{stat.label}</div>
-                    <div className="flex items-end justify-between">
-                      <div className="text-2xl font-medium text-white tracking-tight">{stat.value}</div>
-                      <div className={`text-xs font-medium ${stat.change.startsWith('+') ? 'text-green-500' : 'text-red-500'}`}>
-                        {stat.change}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Table / List */}
-              <div className="border border-white/5 rounded-lg overflow-hidden">
-                <div className="bg-[#111]/50 px-4 py-3 border-b border-white/5 grid grid-cols-12 gap-4 text-[11px] font-medium text-zinc-500 uppercase tracking-wider">
-                  <div className="col-span-4">Active Links</div>
-                  <div className="col-span-2 text-right hidden md:block">Events</div>
-                  <div className="col-span-2 text-right hidden md:block">Conv.</div>
-                  <div className="col-span-2 text-right hidden md:block">Value</div>
-                  <div className="col-span-8 md:col-span-2 text-right">Status</div>
-                </div>
-
-                {[
-                  { name: "vertex-link", domain: "v.inc/partner-alpha", events: "124k", conv: "3.2k", value: "$12.4k", status: "Active" },
-                  { name: "gradient.com", domain: "v.inc/gradient-flow", events: "98k", conv: "2.8k", value: "$9.1k", status: "Active" },
-                  { name: "assisi-client.com", domain: "v.inc/assisi-summer", events: "45k", conv: "1.1k", value: "$3.5k", status: "Active" },
-                  { name: "hyper-scale.io", domain: "v.inc/hyper-q4", events: "12k", conv: "240", value: "$980", status: "Paused" },
-                ].map((row, i) => (
-                  <div key={i} className="bg-[#0A0A0A] px-4 py-3 border-b border-white/5 grid grid-cols-12 gap-4 items-center group hover:bg-white/[0.02] transition-colors last:border-0">
-                    <div className="col-span-4 flex items-center gap-3">
-                      <div className="w-8 h-8 rounded bg-gradient-to-br from-zinc-800 to-zinc-900 border border-white/10 flex items-center justify-center text-white/40">
-                        <Command size={14} />
-                      </div>
-                      <div>
-                        <div className="text-sm font-medium text-white">{row.name}</div>
-                        <div className="text-[11px] text-zinc-600 font-mono hidden sm:block">{row.domain}</div>
-                      </div>
-                    </div>
-                    <div className="col-span-2 text-right text-xs text-zinc-400 tabular-nums hidden md:block">{row.events}</div>
-                    <div className="col-span-2 text-right text-xs text-zinc-400 tabular-nums hidden md:block">{row.conv}</div>
-                    <div className="col-span-2 text-right text-xs text-white font-medium tabular-nums hidden md:block">{row.value}</div>
-                    <div className="col-span-8 md:col-span-2 text-right flex justify-end">
-                      <div className={`px-2 py-0.5 rounded-full text-[10px] font-medium inline-flex items-center gap-1.5 
-                        ${row.status === 'Active' ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-zinc-800 text-zinc-400 border border-zinc-700'}`}>
-                        {row.status === 'Active' && <div className="w-1 h-1 rounded-full bg-green-500 animate-pulse" />}
-                        {row.status}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div className="flex items-center gap-6">
+              <Link href="/login" className="text-[13px] font-light text-zinc-400 hover:text-white transition-colors">
+                Log in
+              </Link>
+              <Link
+                href="/signup"
+                className="text-[13px] font-light bg-white text-black hover:bg-zinc-200 px-4 py-1.5 rounded-[1px] transition-colors"
+              >
+                Sign Up
+              </Link>
             </div>
           </div>
-        </section>
+        </nav>
 
-        {/* Trusted By */}
-        <section className="py-20 border-b border-white/5">
-          <div className="container mx-auto px-6 text-center">
-            <p className="text-zinc-500 text-sm mb-10">Trusted by 1k companies and developers</p>
-            <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-40 grayscale mix-blend-screen">
-              <h4 className="text-xl font-bold tracking-tight text-white">OpenAI</h4>
-              <h4 className="text-xl font-bold tracking-tight text-white">Linear</h4>
-              <h4 className="text-xl font-bold tracking-tight text-white">DATADOG</h4>
-              <h4 className="text-xl font-bold tracking-tight text-white">RIPPLING</h4>
-              <h4 className="text-xl font-bold tracking-tight text-white">Figma</h4>
-              <h4 className="text-xl font-bold tracking-tight text-white">ramp</h4>
-            </div>
-          </div>
-        </section>
+        {/* Main Content Padding for Fixed Navbar */}
+        <main className="pt-16">
 
-        {/* Features / Foundation */}
-        <section className="py-32 container mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-20 items-center">
-            <div className="max-w-xl">
-              <p className="text-orange-500 text-xs font-bold tracking-widest uppercase mb-4">Core Technology</p>
-              <h2 className="text-4xl md:text-5xl font-medium text-white mb-6 tracking-tight">
-                The foundation <br />
-                of <span className="text-zinc-500">every journey</span>
-              </h2>
-              <p className="text-lg text-zinc-400 mb-8 leading-relaxed">
-                Deploy white-label reclamation nodes with industrial-grade logic, dynamic handoffs, geo-targeting, and deep link resolution.
+          {/* Hero Section */}
+          <section className="relative border-b border-white/5 py-32 md:py-40 px-6 md:px-8">
+            <div className="max-w-4xl mx-auto text-center mb-20 relative z-10">
+              <h1 className="text-5xl md:text-7xl font-light tracking-tight leading-[1.1] mb-8 text-white">
+                Browser Infrastructure <br />
+                <span className="text-zinc-500">for AI Agents</span>
+              </h1>
+              <p className="text-lg text-zinc-400 leading-relaxed font-light mb-10 max-w-xl mx-auto">
+                A collaborative digital assistant that lives in the cloud. Delegate complex web tasks via email and watch it work in real-time.
               </p>
-              <div className="flex items-center gap-4">
-                <button className="px-6 py-3 bg-white text-black font-medium text-sm rounded-[4px] hover:bg-zinc-200 transition-colors">
-                  Browse Edge Features
-                </button>
-                <button className="px-6 py-3 bg-transparent border border-white/10 text-white font-medium text-sm rounded-[4px] hover:bg-white/5 transition-colors">
-                  Learn More
-                </button>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Link
+                  href="/signup"
+                  className="w-full sm:w-auto px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white text-[13px] font-light rounded-[1px] transition-colors flex items-center justify-center gap-2"
+                >
+                  Start For Free
+                </Link>
+                <Link
+                  href="/demo"
+                  className="w-full sm:w-auto px-8 py-3 bg-[#111] border border-white/10 hover:border-white/20 text-white text-[13px] font-light rounded-[1px] transition-colors flex items-center justify-center gap-2"
+                >
+                  <div className="w-4 h-4 rounded-full bg-white flex items-center justify-center">
+                    <Play size={8} className="fill-black text-black ml-0.5" />
+                  </div>
+                  View Demo
+                </Link>
               </div>
             </div>
 
-            {/* Feature Visualization (List) */}
-            <div className="relative">
-              {/* Dot Pattern again for consistency */}
-              <div className="absolute inset-0 z-0 opacity-20 pointer-events-none"
+            {/* Large Hero Placeholder Visual (Clean) */}
+            <div className="max-w-6xl mx-auto relative z-10">
+              <div className="aspect-video w-full bg-[#050505] border border-white/10 rounded-[1px] flex items-center justify-center relative overflow-hidden group">
+                {/* Clean Placeholder - No internal grid */}
+
+                {/* Placeholder Text/Icon */}
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/5 animate-pulse">
+                    <Play size={32} className="text-white/20 fill-white/5" />
+                  </div>
+                  <p className="text-zinc-600 font-light text-sm tracking-widest uppercase">Product Demo / Visual</p>
+                </div>
+
+                {/* Corner Accents */}
+                <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-white/20"></div>
+                <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-white/20"></div>
+                <div className="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-white/20"></div>
+                <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-white/20"></div>
+              </div>
+            </div>
+          </section>
+
+          {/* Main Features Bento Grid */}
+          <section className="bg-[#09090b] border-b border-white/5">
+            <div className="grid lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-white/5">
+
+              {/* Col 1 */}
+              <div className="p-12 md:p-16 flex flex-col justify-between h-[500px]">
+                <div className="mb-12">
+                  <div className="w-10 h-10 bg-blue-500/10 rounded-[1px] flex items-center justify-center text-blue-500 mb-6">
+                    <Zap size={20} strokeWidth={1.5} />
+                  </div>
+                  <h3 className="text-xl font-light text-white mb-3">Instant Scalability</h3>
+                  <p className="text-sm font-light text-zinc-500 leading-relaxed">
+                    Spin up thousands of browser sessions in seconds. No infrastructure to manage, just API calls.
+                  </p>
+                </div>
+                <div className="h-full bg-[#050505] border border-white/5 rounded-[1px] relative overflow-hidden">
+                  {/* Abstract viz */}
+                  <div className="absolute bottom-0 left-0 right-0 h-full flex items-end justify-around px-4 pb-2">
+                    {[40, 70, 50, 90, 60, 80].map((h, i) => (
+                      <div key={i} className="w-2 bg-blue-500/20" style={{ height: `${h}%` }}></div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Col 2 (Middle Section) */}
+              <div className="p-12 md:p-16 lg:col-span-1 bg-[#0b0b0d] h-[500px] flex flex-col justify-between">
+                <div className="mb-12">
+                  <div className="w-10 h-10 bg-white/5 rounded-[1px] flex items-center justify-center text-zinc-300 mb-6">
+                    <Activity size={20} strokeWidth={1.5} />
+                  </div>
+                  <h3 className="text-xl font-light text-white mb-3">Live Observability</h3>
+                  <p className="text-sm font-light text-zinc-500 leading-relaxed">
+                    Watch your agents work in real-time with live video streaming and detailed DOM logs.
+                  </p>
+                </div>
+                <div className="space-y-px bg-white/5 border border-white/5 rounded-[1px] overflow-hidden flex-1 flex flex-col">
+                  <div className="bg-[#050505] p-3 flex items-center justify-between shrink-0">
+                    <span className="text-[10px] text-zinc-500 font-mono">session_id_8fj92</span>
+                    <span className="text-[10px] text-green-500 font-mono">Active</span>
+                  </div>
+                  <div className="bg-[#050505] p-3 flex-1 flex items-center justify-center relative">
+                    {/* Faint grid bg inside stream */}
+                    <div className="absolute inset-0 opacity-[0.05] bg-[url('/grid-pixel.png')] bg-[length:20px_20px]"></div>
+                    <div className="text-[10px] text-zinc-700 font-mono relative z-10">Stream Placeholder</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Col 3 */}
+              <div className="p-12 md:p-16 flex flex-col justify-between h-[500px]">
+                <div className="mb-12">
+                  <div className="w-10 h-10 bg-purple-500/10 rounded-[1px] flex items-center justify-center text-purple-500 mb-6">
+                    <Shield size={20} strokeWidth={1.5} />
+                  </div>
+                  <h3 className="text-xl font-light text-white mb-3">Residential Proxy Mesh</h3>
+                  <p className="text-sm font-light text-zinc-500 leading-relaxed">
+                    Route traffic through millions of IP addresses to remain undetected and avoid blocks.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 mt-4">
+                  {['US', 'UK', 'DE', 'JP', 'BR'].map(c => (
+                    <div key={c} className="text-[10px] text-zinc-600 border border-white/5 px-2 py-1 rounded-[1px] hover:border-white/10 cursor-default transition-colors">{c}</div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          {/* Capabilities Grid (Re-introduced) */}
+          <section className="py-32 px-6 md:px-8 border-b border-white/5">
+            <div className="mb-20 max-w-2xl">
+              <p className="text-blue-500 text-xs font-medium uppercase tracking-widest mb-4">Capabilities</p>
+              <h2 className="text-3xl md:text-4xl font-light text-white mb-6">
+                What you can build with Ghost
+              </h2>
+              <p className="text-zinc-400 text-lg font-light leading-relaxed">
+                From simple data extraction to fully autonomous web agents, Ghost provides the primitives to build any browser-based workflow.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-px bg-white/5 border border-white/5 rounded-[1px] overflow-hidden">
+
+              {/* Card 1 */}
+              <div className="bg-[#0b0b0d] p-10 hover:bg-[#111] transition-colors group h-full">
+                <div className="w-10 h-10 bg-blue-500/10 rounded-[1px] flex items-center justify-center text-blue-500 mb-6">
+                  <Mail size={20} strokeWidth={1.5} />
+                </div>
+                <h3 className="text-lg font-light text-white mb-3 group-hover:text-blue-400 transition-colors">Email Agents</h3>
+                <p className="text-sm font-light text-zinc-500 leading-relaxed">
+                  Process invoices, categorize support tickets, and draft replies directly from your inbox.
+                </p>
+              </div>
+
+              {/* Card 2 */}
+              <div className="bg-[#0b0b0d] p-10 hover:bg-[#111] transition-colors group h-full">
+                <div className="w-10 h-10 bg-orange-500/10 rounded-[1px] flex items-center justify-center text-orange-500 mb-6">
+                  <Globe size={20} strokeWidth={1.5} />
+                </div>
+                <h3 className="text-lg font-light text-white mb-3 group-hover:text-orange-400 transition-colors">Web Navigation</h3>
+                <p className="text-sm font-light text-zinc-500 leading-relaxed">
+                  Autonomously browse complex SPAs, handle authentication, and interact with dynamic UI elements.
+                </p>
+              </div>
+
+              {/* Card 3 */}
+              <div className="bg-[#0b0b0d] p-10 hover:bg-[#111] transition-colors group h-full">
+                <div className="w-10 h-10 bg-purple-500/10 rounded-[1px] flex items-center justify-center text-purple-500 mb-6">
+                  <Zap size={20} strokeWidth={1.5} />
+                </div>
+                <h3 className="text-lg font-light text-white mb-3 group-hover:text-purple-400 transition-colors">Research Assistants</h3>
+                <p className="text-sm font-light text-zinc-500 leading-relaxed">
+                  Gather market data, compare prices, and summarize findings into structured reports.
+                </p>
+              </div>
+
+              {/* Card 4 */}
+              <div className="bg-[#0b0b0d] p-10 hover:bg-[#111] transition-colors group h-full">
+                <div className="w-10 h-10 bg-green-500/10 rounded-[1px] flex items-center justify-center text-green-500 mb-6">
+                  <Shield size={20} strokeWidth={1.5} />
+                </div>
+                <h3 className="text-lg font-light text-white mb-3 group-hover:text-green-400 transition-colors">Secure Delegation</h3>
+                <p className="text-sm font-light text-zinc-500 leading-relaxed">
+                  Enterprise-grade security with isolated browser contexts and encrypted memory management.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* Additional Features List */}
+          <section className="bg-[#09090b]">
+            <div className="grid lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-white/5 border-b border-white/5">
+
+              {/* Wide Feature 1 */}
+              <div className="p-16 flex flex-col justify-center">
+                <h3 className="text-2xl font-light text-white mb-4">Email-to-Agent Delegation</h3>
+                <p className="text-sm font-light text-zinc-500 leading-relaxed mb-6 max-w-md">
+                  Simply forward an email to your Ghost agent to trigger complex workflows. It understands context, attachments, and urgency.
+                </p>
+                <div className="inline-flex items-center gap-2 text-blue-500 text-xs font-light hover:underline cursor-pointer group">
+                  Learn about AgentMail <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </div>
+
+              {/* Wide Feature 2 */}
+              <div className="p-16 flex flex-col justify-center">
+                <h3 className="text-2xl font-light text-white mb-4">Headless Browser API</h3>
+                <p className="text-sm font-light text-zinc-500 leading-relaxed mb-8 max-w-md">
+                  Full control over Chrome instances via WebSocket or REST API. Compatible with Puppeteer, Playwright, and Selenium.
+                </p>
+                <div className="bg-[#050505] border border-white/5 rounded-[1px] p-6 font-mono text-[11px] text-zinc-400 w-full max-w-sm">
+                  <div className="flex gap-2 border-b border-white/5 pb-2 mb-2">
+                    <span className="text-purple-400">POST</span>
+                    <span>/v1/sessions</span>
+                  </div>
+                  <div className="space-y-1">
+                    <div><span className="text-blue-400">"proxy"</span>: <span className="text-green-400">"residential"</span>,</div>
+                    <div><span className="text-blue-400">"block_ads"</span>: <span className="text-yellow-400">true</span>,</div>
+                    <div><span className="text-blue-400">"captcha_solving"</span>: <span className="text-yellow-400">true</span></div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+
+          {/* CTA Section with Glassmorphism & Ascii Background */}
+          <section className="relative h-[600px] border-b border-white/5 overflow-hidden flex items-center justify-center group">
+
+            {/* Background Image: High Quality, No Stretch */}
+            <div className="absolute inset-0 z-0 bg-[#09090b]">
+              <Image
+                src="/beach-sunset-ascii.png"
+                alt="Background"
+                fill
+                priority={true}
+                quality={100}
+                className="object-cover opacity-60 mix-blend-luminosity brightness-50"
                 style={{
-                  backgroundImage: 'radial-gradient(#F97316 1px, transparent 1px)',
-                  backgroundSize: '24px 24px',
-                  maskImage: 'radial-gradient(circle at center, black 0%, transparent 80%)'
+                  filter: 'grayscale(100%) sepia(100%) hue-rotate(190deg) saturate(200%) contrast(1.1)'
                 }}
               />
+              <div className="absolute inset-0 bg-blue-900/10 mix-blend-overlay"></div>
+            </div>
 
-              <div className="relative z-10 space-y-4">
-                {[
-                  { icon: <Zap size={16} />, label: "vertex-link", tag: "ROOT", time: "12ms", status: "Active" },
-                  { icon: <Globe size={16} />, label: "gradient.com", tag: "NODE", time: "45ms", status: "Active" },
-                  { icon: <LayoutGrid size={16} />, label: "assisi-client.com", tag: "EDGE", time: "28ms", status: "Active" },
-                ].map((item, i) => (
-                  <div key={i} className="bg-[#0A0A0A] border border-white/10 p-4 rounded-lg flex items-center justify-between shadow-lg">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-zinc-900 rounded flex items-center justify-center text-white border border-white/5">
-                        {item.icon}
-                      </div>
-                      <div>
-                        <div className="text-sm font-medium text-white flex items-center gap-2">
-                          {item.label}
-                          {item.tag && <span className="text-[9px] bg-red-500/20 text-red-500 px-1.5 py-0.5 rounded border border-red-500/20">{item.tag}</span>}
-                        </div>
-                        <div className="text-xs text-zinc-500 font-mono mt-0.5">v.inc/secure-route-{i + 10}</div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-6">
-                      <span className="text-xs text-zinc-500 font-mono">{item.time}</span>
-                      <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-green-500/10 border border-green-500/20 text-[10px] text-green-500 font-medium uppercase tracking-wide">
-                        <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                        {item.status}
-                      </div>
-                    </div>
-                  </div>
-                ))}
+            {/* Glassmorphic Card */}
+            <div className="relative z-10 bg-black/40 backdrop-blur-2xl border border-white/10 p-16 md:p-20 text-center max-w-3xl mx-4 rounded-[1px] shadow-2xl">
+              <h2 className="text-4xl md:text-5xl font-light text-white mb-6">
+                Ready to hire your Ghost?
+              </h2>
+              <p className="text-zinc-300 font-light text-lg mb-12">
+                Join the thousands of developers automating the web with our infrastructure.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                <Link href="/signup" className="w-full sm:w-auto px-10 py-4 bg-blue-600 hover:bg-blue-500 text-white text-[13px] font-medium tracking-wide rounded-[1px] transition-colors shadow-lg">
+                  Start Building
+                </Link>
+                <Link href="/contact" className="w-full sm:w-auto px-10 py-4 bg-transparent border border-white/20 hover:bg-white/5 text-white text-[13px] font-medium tracking-wide rounded-[1px] transition-colors">
+                  Contact Sales
+                </Link>
               </div>
             </div>
-          </div>
-        </section>
 
-      </main>
+          </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/5 py-12 bg-[#050505]">
-        <div className="container mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
-          <div>
-            <h5 className="text-white font-bold mb-4">Product</h5>
-            <ul className="space-y-2 text-sm text-zinc-500">
-              <li><Link href="#" className="hover:text-white transition-colors">Features</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Integrations</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Pricing</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h5 className="text-white font-bold mb-4">Resources</h5>
-            <ul className="space-y-2 text-sm text-zinc-500">
-              <li><Link href="#" className="hover:text-white transition-colors">Documentation</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">API Reference</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Status</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h5 className="text-white font-bold mb-4">Company</h5>
-            <ul className="space-y-2 text-sm text-zinc-500">
-              <li><Link href="#" className="hover:text-white transition-colors">About</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Blog</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Careers</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h5 className="text-white font-bold mb-4">Legal</h5>
-            <ul className="space-y-2 text-sm text-zinc-500">
-              <li><Link href="#" className="hover:text-white transition-colors">Privacy</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Terms</Link></li>
-            </ul>
-          </div>
-        </div>
-      </footer>
+          {/* Footer */}
+          <footer className="bg-[#09090b] py-20 px-6 md:px-8 border-t border-white/5">
+            <div className="flex flex-col md:flex-row justify-between items-start gap-12">
+              <div className="space-y-6 max-w-xs">
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 bg-white rounded-[1px] flex items-center justify-center text-black">
+                    <Terminal size={12} strokeWidth={2} />
+                  </div>
+                  <span className="font-medium text-white text-sm">Ghost</span>
+                </div>
+                <p className="text-xs text-zinc-500 font-light leading-relaxed">
+                  Browser infrastructure for the AI era.
+                </p>
+              </div>
 
+              <div className="flex gap-20 text-xs text-zinc-500 font-light">
+                <div className="space-y-4">
+                  <h4 className="text-white font-medium">Product</h4>
+                  <ul className="space-y-2">
+                    <li className="hover:text-white cursor-pointer transition-colors">API</li>
+                    <li className="hover:text-white cursor-pointer transition-colors">Pricing</li>
+                    <li className="hover:text-white cursor-pointer transition-colors">Enterprise</li>
+                  </ul>
+                </div>
+                <div className="space-y-4">
+                  <h4 className="text-white font-medium">Resources</h4>
+                  <ul className="space-y-2">
+                    <li className="hover:text-white cursor-pointer transition-colors">Documentation</li>
+                    <li className="hover:text-white cursor-pointer transition-colors">Guides</li>
+                    <li className="hover:text-white cursor-pointer transition-colors">Status</li>
+                  </ul>
+                </div>
+                <div className="space-y-4">
+                  <h4 className="text-white font-medium">Company</h4>
+                  <ul className="space-y-2">
+                    <li className="hover:text-white cursor-pointer transition-colors">Blog</li>
+                    <li className="hover:text-white cursor-pointer transition-colors">Careers</li>
+                    <li className="hover:text-white cursor-pointer transition-colors">Twitter</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </footer>
+
+        </main>
+
+      </div>
     </div>
   );
 }

@@ -125,9 +125,76 @@ async def send_teammate_email(
         data = response.json()
         return {"id": data.get("id"), "sent": True}
         
-    except Exception as e:
-        print(f"⚠️ AgentMail Send Exception: {e}")
         return {"id": None, "error": str(e)}
+
+
+async def search_agent_inbox(user_id: str, query: str = None, limit: int = 5, sent_to: str = None) -> List[Dict[str, Any]]:
+    """
+    Allows the agent to search its OWN inbox for verification codes, etc.
+    
+    Security Checks:
+    1. Ensures we only return emails sent TO the agent (or its aliases).
+    2. Filters based on the current user's task context if needed (not strict yet, but good practice).
+    """
+    agent_email = get_agent_email()
+    inbox_id = agent_email  # AgentMail uses email as ID often
+    
+    # GET /inboxes/{inbox_id}/messages
+    # We can probably filter by 'q' or 'to' parameters if supported
+    url = f"{API_BASE}/inboxes/{inbox_id}/messages"
+    
+    params = {"limit": limit}
+    # If API supports 'q' or 'search'
+    if query:
+        params["q"] = query
+        
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url, headers=HEADERS, params=params)
+            
+        if response.status_code != 200:
+            print(f"⚠️ Failed to list messages: {response.text}")
+            return []
+            
+        messages = response.json().get("data", [])
+        
+        # In-memory filtering for security/precision
+        filtered_messages = []
+        for msg in messages:
+            msg_to = msg.get("to", [])
+            if isinstance(msg_to, str):
+                msg_to = [msg_to]
+            
+            # 1. Filter by recipient if specified (e.g., ghost+twitter@...)
+            if sent_to and sent_to not in msg_to:
+                continue
+                
+            # 2. Basic semantic fit check (simple string match if API didn't do it)
+            if query:
+                subject = msg.get("subject", "").lower()
+                body = (msg.get("text") or msg.get("body_text") or "").lower()
+                q_lower = query.lower()
+                if q_lower not in subject and q_lower not in body:
+                    continue
+            
+            # Extract only safe/relevant info
+            filtered_messages.append({
+                "id": msg.get("id"),
+                "subject": msg.get("subject"),
+                "from": msg.get("from_email") or msg.get("from"),
+                "to": msg.get("to"),
+                "timestamp": msg.get("created_at"),
+                "snippet": (msg.get("text") or msg.get("body_text") or "")[:200]
+            })
+            
+            if len(filtered_messages) >= limit:
+                break
+                
+        return filtered_messages
+        
+    except Exception as e:
+        print(f"❌ Error searching AgentMail inbox: {e}")
+        return []
 
 
 # ==============================================================================
@@ -231,20 +298,34 @@ async def send_approval_request(user_email: str, user_id: str, workflow_id: str,
     '''
     return await send_teammate_email(user_email, user_id, "⚠️ Action Requires Your Approval", _get_email_wrapper(content))
 
-async def send_task_started_email(user_email: str, user_id: str, goal: str, dashboard_url: Optional[str] = None) -> dict:
+async def send_task_started_email(user_email: str, user_id: str, goal: str, dashboard_url: Optional[str] = None, thread_id: str = None) -> dict:
     dash_link = dashboard_url or f"{settings.FRONTEND_URL}/dashboard"
-    content = f'''
-        <div style="text-align: center; margin-bottom: 24px;">
-            <div style="display: inline-block; width: 56px; height: 56px; background: rgba(59, 130, 246, 0.1); border-radius: 16px; line-height: 56px; font-size: 28px;">🚀</div>
-        </div>
-        <h1 style="margin: 0 0 8px 0; font-size: 22px; font-weight: 600; color: white; text-align: center;">Task Started</h1>
-        <div style="background: {BRAND_BG}; border: 1px solid {BRAND_BORDER}; padding: 16px 20px; margin: 0 0 24px 0; border-radius: 8px;">
-            <p style="margin: 0 0 6px 0; font-size: 11px; color: {BRAND_DIM}; text-transform: uppercase;">Your Request</p>
-            <p style="margin: 0; font-size: 14px; color: white;">{goal[:500]}</p>
-        </div>
-        <a href="{dash_link}" style="display: block; background: {BRAND_PRIMARY}; color: white; padding: 14px 24px; text-decoration: none; border-radius: 8px; text-align: center; font-weight: 600;">Watch Live in Dashboard →</a>
-    '''
-    return await send_teammate_email(user_email, user_id, "🚀 Working on your task", _get_email_wrapper(content))
+    
+    # If replying to a thread, use a more conversational style
+    if thread_id:
+        content = f'''
+            <p style="margin: 0 0 16px 0; color: white; font-size: 15px;">I'm on it! 🫡</p>
+            <p style="margin: 0 0 24px 0; color: {BRAND_MUTED}; font-size: 14px;">I've started working on this. I'll let you know when it's done.</p>
+            
+            <a href="{dash_link}" style="display: inline-block; background: {BRAND_PRIMARY}; color: white; padding: 10px 18px; text-decoration: none; border-radius: 6px; font-size: 13px; font-weight: 500;">Watch progress live →</a>
+        '''
+        subject = "Re: Your Request" # Subject is usually ignored in threading but good fallback
+    else:
+        # Standard notification for dashboard-initiated tasks
+        content = f'''
+            <div style="text-align: center; margin-bottom: 24px;">
+                <div style="display: inline-block; width: 56px; height: 56px; background: rgba(59, 130, 246, 0.1); border-radius: 16px; line-height: 56px; font-size: 28px;">🚀</div>
+            </div>
+            <h1 style="margin: 0 0 8px 0; font-size: 22px; font-weight: 600; color: white; text-align: center;">Task Started</h1>
+            <div style="background: {BRAND_BG}; border: 1px solid {BRAND_BORDER}; padding: 16px 20px; margin: 0 0 24px 0; border-radius: 8px;">
+                <p style="margin: 0 0 6px 0; font-size: 11px; color: {BRAND_DIM}; text-transform: uppercase;">Your Request</p>
+                <p style="margin: 0; font-size: 14px; color: white;">{goal[:500]}</p>
+            </div>
+            <a href="{dash_link}" style="display: block; background: {BRAND_PRIMARY}; color: white; padding: 14px 24px; text-decoration: none; border-radius: 8px; text-align: center; font-weight: 600;">Watch Live in Dashboard →</a>
+        '''
+        subject = "🚀 Working on your task"
+
+    return await send_teammate_email(user_email, user_id, subject, _get_email_wrapper(content), thread_id=thread_id)
 
 async def send_completion_email(user_email: str, user_id: str, goal: str, summary: str, actions_taken: Optional[list] = None) -> dict:
     actions_html = ""

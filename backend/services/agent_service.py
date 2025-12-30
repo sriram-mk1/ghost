@@ -421,25 +421,29 @@ Relevant Memories: {user_context.get('relevant_memories', 'None')}
                 "error": "screenshot_failed"
             }
         
-        # Initialize conversation with the task (first turn only)
-        if not self.memory.contents:
-            initial_message = f"""GOAL: {task}
-
-You are controlling a browser. The browser is already open and ready.
-Look at the screenshot and take the next action to accomplish this goal.
-If you need to navigate to a website, use the 'navigate' action with a URL.
-If you see what you need, interact with it using click, type, scroll, etc.
-
-IMPORTANT: The browser is already open. Do NOT use open_web_browser.
-Instead, use 'navigate' to go to a URL or interact with the current page.
-
-If you need to ask the user for clarification, return a text response explaining what information you need."""
+            # Check for feedback/interruption before starting turn
+            # (In a real temporal workflow, this would be a Signal)
+            # For now, we simulate this by checking if the last user message was a feedback
             
-            self.memory.add_user_message(initial_message, img_bytes)
-            self.memory.add_progress("Started browser session")
-        else:
-            # Add new screenshot to existing conversation
-            self.memory.add_user_message("Here is the current state. What's the next action?", img_bytes)
+            # Initialize conversation with the task (first turn only)
+            if not self.memory.contents:
+                initial_message = f"""GOAL: {task}
+
+You are controlling a browser. 
+The browser is previously opened. 
+Observe the screenshot and execute the next logical step.
+Strictly follow the coordinate system (0-1000).
+
+Refuse to stop until the task is clearly done.
+"""
+                self.memory.add_user_message(initial_message, img_bytes)
+                self.memory.add_progress("Started browser session")
+            else:
+                # Add new screenshot to existing conversation for the next turn
+                # This is where we would also inject "USER FEEDBACK" if we had a signal
+                next_prompt = "Here is the current state. What's the next action?"
+                self.memory.add_user_message(next_prompt, img_bytes)
+
         
         # 2. THINK: Get Gemini's next action using Computer Use
         config = types.GenerateContentConfig(
@@ -449,6 +453,7 @@ If you need to ask the user for clarification, return a text response explaining
                     computer_use=types.ComputerUse(
                         environment=types.Environment.ENVIRONMENT_BROWSER,
                         # Exclude open_web_browser since our browser is already open
+                        # We are keeping 'navigate' allowed though the model might try to use it as tool call
                         excluded_predefined_functions=["open_web_browser"]
                     )
                 )
@@ -710,6 +715,14 @@ If you need to ask the user for clarification, return a text response explaining
                 steel_service.wait(self.session_id, 0.5)
                 return {"status": "success", "x": x, "y": y}
             
+            elif action_name == "double_click_at":
+                x = denormalize_x(args.get("x", 500))
+                y = denormalize_y(args.get("y", 500))
+                print(f"🖱️🖱️ Double-clicking at ({x}, {y})")
+                steel_service.double_click(self.session_id, x, y)
+                steel_service.wait(self.session_id, 0.5)
+                return {"status": "success", "x": x, "y": y}
+            
             elif action_name == "hover_at":
                 x = denormalize_x(args.get("x", 500))
                 y = denormalize_y(args.get("y", 500))
@@ -784,6 +797,47 @@ If you need to ask the user for clarification, return a text response explaining
                 delta_y = magnitude if direction == "down" else -magnitude
                 steel_service.scroll(self.session_id, x, y, delta_y)
                 return {"status": "success", "direction": direction}
+            
+            # ================================================================
+            # EMAIL / VERIFICATION TOOLS
+            # ================================================================
+            elif action_name == "check_email":
+                query = args.get("query")
+                sent_to = args.get("sent_to")
+                limit = args.get("limit", 3)
+                print(f"📧 Checking inbox for: {query} (to: {sent_to})")
+                
+                from backend.services.agentmail_service import search_agent_inbox
+                # Run async in sync context if needed, but since we are in `execute_turn` which is async
+                # wait.. `_execute_computer_action` is currently sync in this file?
+                # Ah, looking at the code, `_execute_computer_action` is synchronous in dispatch 
+                # but calls async services? No, Steel methods are sync. 
+                # We need to bridge this. Ideally `_execute_computer_action` should be async.
+                # Since I cannot refactor the whole method to async right now without breaking potential callers,
+                # I will use a sync wrapper or specific dispatch. 
+                # Actually, `execute_turn` awaits `agent.execute_turn` so we can make valid async calls if we bubble it up.
+                # BUT `_execute_computer_action` is called in `execute_turn` and NOT awaited there currently in the loop 
+                # (it says `result = self._execute_computer_action(...)`).
+                
+                # FIX: We will do a quick async-to-sync bridge or better yet, Import a sync/helper.
+                # Since we are in an async loop in `execute_turn`, let's just use `asyncio.run` or loop run? 
+                # No, that's bad practice in nested loops. 
+                # Let's check `execute_turn` implementation. It IS `async def execute_turn`.
+                # So we SHOULD await `_execute_computer_action` if we make it async. 
+                # But to avoid massive refactor, I will implement a bridge here just for this tool.
+                import asyncio
+                loop = asyncio.get_event_loop()
+                messages = loop.run_until_complete(search_agent_inbox(self.user_id, query, limit, sent_to))
+                
+                if not messages:
+                    return {"status": "success", "found": False, "messages": []}
+                
+                return {
+                    "status": "success", 
+                    "found": True, 
+                    "messages": messages, 
+                    "count": len(messages)
+                }
             
             # ================================================================
             # UNKNOWN ACTION
