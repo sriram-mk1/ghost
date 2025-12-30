@@ -25,6 +25,8 @@ from backend.temporal.activities import (
     send_completion_email,
     save_task_memory,
     release_browser_session,
+    send_task_started_email_activity,
+    send_error_email_activity,
 )
 
 
@@ -55,6 +57,8 @@ async def main():
             send_completion_email,
             save_task_memory,
             release_browser_session,
+            send_task_started_email_activity,
+            send_error_email_activity,
         ],
     )
     
@@ -69,6 +73,8 @@ async def main():
         "send_completion_email",
         "save_task_memory",
         "release_browser_session",
+        "send_task_started_email_activity",
+        "send_error_email_activity",
     ]
     
     print("")

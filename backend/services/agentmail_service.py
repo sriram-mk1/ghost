@@ -125,6 +125,8 @@ async def send_teammate_email(
         data = response.json()
         return {"id": data.get("id"), "sent": True}
         
+    except Exception as e:
+        print(f"⚠️ AgentMail Send Exception: {e}")
         return {"id": None, "error": str(e)}
 
 

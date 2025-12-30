@@ -9,7 +9,7 @@ import {
     ExternalLink, Copy, Eye, EyeOff, Search,
     LayoutGrid, Zap, History, Loader2, Skull,
     LogOut, Coffee, MonitorPlay, ChevronDown, Check,
-    Plus, Clock, Inbox, Sparkles, Filter
+    Plus, Clock, Inbox, Sparkles, Filter, MessageSquare
 } from "lucide-react";
 import Link from "next/link";
 import { clsx, type ClassValue } from "clsx";
@@ -103,8 +103,12 @@ export default function DashboardPage() {
     const [isLoadingJobs, setIsLoadingJobs] = useState(true);
     const [isKilling, setIsKilling] = useState(false);
 
+    // Interaction State
+    const [feedbackText, setFeedbackText] = useState("");
+    const [isSendingFeedback, setIsSendingFeedback] = useState(false);
+
     // UI State
-    const [rightPanelTab, setRightPanelTab] = useState<"details" | "logs" | "agent_logs">("details");
+    const [rightPanelTab, setRightPanelTab] = useState<"details" | "logs" | "interact">("details");
     const [toasts, setToasts] = useState<{ id: string; message: string }[]>([]);
 
     const addToast = (message: string) => {
@@ -118,6 +122,39 @@ export default function DashboardPage() {
     const handleCopy = (text: string, label: string) => {
         navigator.clipboard.writeText(text);
         addToast(`${label} copied to clipboard`);
+    };
+
+    const handleKillJob = async () => {
+        if (!activeJob?.temporal_workflow_id) return;
+        setIsKilling(true);
+        try {
+            await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/tasks/${activeJob.temporal_workflow_id}/kill`, {
+                method: "POST"
+            });
+            addToast("Kill signal sent");
+        } catch (e) {
+            console.error(e);
+            addToast("Failed to kill task");
+        } finally {
+            setIsKilling(false);
+        }
+    };
+
+    const handleSendFeedback = async () => {
+        if (!activeJob?.temporal_workflow_id || !feedbackText.trim()) return;
+        setIsSendingFeedback(true);
+        try {
+            await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/tasks/${activeJob.temporal_workflow_id}/message?message=${encodeURIComponent(feedbackText)}`, {
+                method: "POST"
+            });
+            addToast("Feedback sent to agent");
+            setFeedbackText("");
+        } catch (e) {
+            console.error(e);
+            addToast("Failed to send feedback");
+        } finally {
+            setIsSendingFeedback(false);
+        }
     };
 
     // Redirect if not authenticated
@@ -502,6 +539,16 @@ export default function DashboardPage() {
                                             Task Stream
                                             {rightPanelTab === "logs" && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-white rounded-full"></div>}
                                         </button>
+                                        <button
+                                            onClick={() => setRightPanelTab("interact")}
+                                            className={cn(
+                                                "relative px-4 py-4 text-xs font-light transition-all",
+                                                rightPanelTab === "interact" ? "text-white" : "text-zinc-600 hover:text-zinc-300"
+                                            )}
+                                        >
+                                            Interact
+                                            {rightPanelTab === "interact" && <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-white rounded-full"></div>}
+                                        </button>
                                     </div>
 
                                     {/* Panel Content */}
@@ -558,6 +605,42 @@ export default function DashboardPage() {
                                                 ))}
                                             </div>
                                         )}
+
+                                        {rightPanelTab === "interact" && (
+                                            <div className="flex flex-col h-full animate-in fade-in duration-500">
+                                                <div className="mb-8">
+                                                    <h4 className="text-xs font-light text-zinc-500 mb-4">Feedback Loop</h4>
+                                                    <p className="text-xs text-zinc-400 mb-3 font-light leading-relaxed">
+                                                        Guidance sent here will be injected into the agent's context immediately.
+                                                    </p>
+                                                    <textarea
+                                                        value={feedbackText}
+                                                        onChange={(e) => setFeedbackText(e.target.value)}
+                                                        placeholder="e.g. 'That wasn't right, try looking at the footer...'"
+                                                        className="w-full bg-black border border-white/10 rounded-sm p-3 text-sm text-white placeholder:text-zinc-700 focus:outline-none focus:border-blue-500/50 min-h-[120px] mb-3 resize-none font-light"
+                                                    />
+                                                    <button
+                                                        onClick={handleSendFeedback}
+                                                        disabled={isSendingFeedback || !feedbackText.trim()}
+                                                        className="w-full bg-white text-black py-2.5 rounded-sm text-xs font-bold hover:bg-zinc-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                                    >
+                                                        {isSendingFeedback ? <Loader2 size={14} className="animate-spin mx-auto" /> : "Send Instruction"}
+                                                    </button>
+                                                </div>
+
+                                                <div className="mt-auto border-t border-white/5 pt-6">
+                                                    <h4 className="text-xs font-light text-red-400 mb-4">Danger Zone</h4>
+                                                    <button
+                                                        onClick={handleKillJob}
+                                                        disabled={isKilling}
+                                                        className="w-full border border-red-500/20 bg-red-500/5 text-red-500 py-3 rounded-sm text-xs font-bold hover:bg-red-500/10 hover:border-red-500/40 transition-all flex items-center justify-center gap-2"
+                                                    >
+                                                        {isKilling ? <Loader2 size={14} className="animate-spin" /> : <Skull size={14} />}
+                                                        {isKilling ? "Terminating..." : "Kill Session"}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -600,15 +683,15 @@ export default function DashboardPage() {
                                                         className="bg-[#0c0c0e] border border-white/10 rounded-sm p-6 hover:border-white/30 hover:bg-[#121214] cursor-pointer transition-all group relative overflow-hidden animate-in fade-in duration-500 fill-mode-both"
                                                         style={{ animationDelay: `${idx * 40}ms` }}
                                                     >
-                                                        <div className="flex flex-col h-full justify-between gap-8">
+                                                        <div className="flex flex-col h-full justify-between gap-8 pb-6">
                                                             <div className="flex justify-between items-start">
                                                                 <div className="w-10 h-10 rounded-sm bg-black border border-white/10 flex items-center justify-center text-zinc-500 group-hover:text-white transition-all group-hover:scale-110">
                                                                     <CategoryIcon job={job} />
                                                                 </div>
                                                                 <StatusBadge status={job.status} />
                                                             </div>
-                                                            <div>
-                                                                <h3 className="text-lg font-normal text-white group-hover:text-blue-400 transition-colors mb-2 truncate">
+                                                            <div className="relative z-10">
+                                                                <h3 className="text-lg font-normal text-white group-hover:text-blue-400 transition-colors mb-2 truncate pr-12">
                                                                     {job.goal || "Unnamed Protocol"}
                                                                 </h3>
                                                                 <div className="flex items-center gap-4 text-xs text-zinc-500 font-light">
@@ -617,7 +700,7 @@ export default function DashboardPage() {
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div className="absolute right-5 bottom-5 w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-zinc-400 group-hover:bg-white group-hover:text-black transition-all transform group-hover:scale-110">
+                                                        <div className="absolute right-5 bottom-5 w-9 h-9 rounded-sm bg-white/5 flex items-center justify-center text-zinc-400 group-hover:bg-white group-hover:text-black transition-all transform group-hover:scale-110 shadow-lg">
                                                             <ArrowRight size={18} />
                                                         </div>
                                                     </div>
